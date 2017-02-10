@@ -316,6 +316,7 @@ static Object* CreateGroup2(struct AppObjects *objs)
 				"Adds AltiVec detection code to the library initialization and sets 'HaveAltiVec' field in the library base accordingly. "
 				"Note that non-AltiVec version of the code should be always provided."),
 			MUIA_Group_Child, objs->ChkAltiVec = MUI_NewObjectM(MUIC_Image,
+				// we can't rely on default theme installed, proper background must
 				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
@@ -536,6 +537,7 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				"into a separate file with name starting from \"f_\" followed by the function name. Makefile is modified accordingly. "
 				"If not checked, all the functions are placed in \"library.c\" file."),
 			MUIA_Group_Child, objs->ChkSeparatedFunctions = MUI_NewObjectM(MUIC_Image,
+				// we can't rely on default theme installed, proper background must
 				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
@@ -563,6 +565,7 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				"modified accordingly. If not checked, all the functions are placed in \"methods.c\" file. Note that the class dispatcher "
 				"is always placed in \"library.c\"."),
 			MUIA_Group_Child, objs->ChkSeparatedMethods = MUI_NewObjectM(MUIC_Image,
+				// we can't rely on default theme installed, proper background must
 				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
@@ -1265,8 +1268,6 @@ typedef struct LuaFileReaderData
 	
 };
 
-
-
 const char* memory_reader(UNUSED LuaState *s, APTR data, LONG *size)
 {
         struct LuaMemoryReaderData *lmrd = (struct LuaMemoryReaderData*)data;
@@ -1288,10 +1289,8 @@ const char* file_reader(UNUSED LuaState *s, APTR data, LONG *size)
 
 LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 {
-		#ifdef __amigaos4__
 		APTR pool;
 		pool = CreatePool(MEMF_ANY, 16384, 16384);
-		#endif
 
         LONG result = 0;
 		 		 
@@ -1311,11 +1310,7 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
                 struct LuaFileReaderData lfrd;
                 char *fname = (char*)data;
 
-				#ifdef __amigaos4__
 				if (lfrd.Buffer = (char*)AllocPooled(pool, CODE_BUFFER_SIZE))
-				#else
-                if (lfrd.Buffer = (char*)AllocPooled(LuaBase->MemPool, CODE_BUFFER_SIZE))
-				#endif
 				{
                         BOOL close_input = FALSE;
 
@@ -1333,12 +1328,8 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
                         }
                         else result = LUA_ERRERR;
 
-						#ifdef __amigaos4__
 						FreePooled(pool, lfrd.Buffer, CODE_BUFFER_SIZE);
 						DeletePool(pool);
-						#else
-                        FreePooled(LuaBase->MemPool, lfrd.Buffer, CODE_BUFFER_SIZE);
-						#endif
                 }
                 else result = LUA_ERRMEM;
         }
@@ -1346,10 +1337,8 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 
         return result;
 }
-
-
-
 #endif
+
 
 IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 {
@@ -1374,7 +1363,9 @@ IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 		#endif
 		{
 			#ifdef __amigaos4__
+			// on morphos LuaNewState() contain luaL_openlibs() for init necessary inbuild modules, doing it manually 
 			luaL_openlibs(L);
+			// equvalent of morphos's LuaRegisterModule()
 			luaL_openlib(L,"libmaker", RegFuncs,0);
 			#else
 			LuaRegisterModule(L, "libmaker", RegFuncs);
