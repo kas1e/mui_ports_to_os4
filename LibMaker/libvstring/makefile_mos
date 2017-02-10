@@ -1,0 +1,35 @@
+#
+# Makefile for libvstring
+#
+
+# Commons
+
+CC = ppc-morphos-gcc-4
+AR = ppc-morphos-ar
+CFLAGS = -W -Wall -O2 -Wpointer-arith -Wno-parentheses -DUSE_INLINE_STDARG
+CFLAGS += -fno-strict-aliasing -fno-builtin
+OBJS  = fmtlen.o fmtnew.o fmtput.o freestrarray.o strarraylen.o strcopy.o strlen.o \
+ strnew.o vfmtnew.o strncopy.o fmtnput.o strequ.o strnequ.o clonestrarray.o localefmtlen.o \
+ localefmtnew.o localefmtput.o cph.o strltrim.o strrtrim.o strtrim.o strchr.o strreplace.o
+DOC = libvstring.guide
+LIB = libvstring.a
+
+################################################################################
+
+.PHONY: all clean install install-iso doc
+
+all: $(LIB)
+
+clean:
+	rm -vf $(OBJS) $(LIB) $(DOC)
+
+################################################################################
+
+$(LIB): $(OBJS)
+	@echo "Library merging..."
+	@$(AR) rs $@ $(OBJS)
+	@List $(LIB) LFORMAT "%n %l %d %t"
+
+%.o: %.c libvstring.h
+	@echo "Compiling $@..."
+	@$(CC) $(CFLAGS) -c -o $@ $<

@@ -1,0 +1,68 @@
+#
+# Makefile for LibMaker
+#
+
+
+CC     = ppc-amigaos-gcc
+STRIP  = ppc-amigaos-strip
+BUILD  = $(shell svnversion)
+CFLAGS = -gstabs -D__USE_INLINE__ -W -Wall -O2 -Wpointer-arith -Wno-parentheses
+CFLAGS += -gstabs -D__USE_INLINE__  -Ilibvstring/ 
+LDFLAGS = -gstabs -Llibvstring/
+
+#########################################################################
+
+OBJS = main.o application.o functionlist.o functioneditor.o argumentlist.o classeditor.o
+OBJS += attributelist.o methodlist.o methodeditor.o amigaos4_system.o
+EXE = LibMaker
+LIBS = -lvstring -llua
+
+#########################################################################
+
+.PHONY: all clean deps allclean
+
+all: startmsg libvstring.a program
+	@echo "Build finished."
+#	@list $(EXE) lformat "%n %l %t"
+	@ls $(EXE)
+
+startmsg:
+	@echo "Starting build $(BUILD)."
+
+dep:
+	$(CC) -MM *.c
+
+clean:
+	rm -f *.o *.db $(EXE)
+		
+allclean: clean
+	make -f makefile_os4 -C libvstring clean
+	rm libvstring.a
+
+
+program: $(OBJS)
+	@echo "Linking executable..."
+#	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(EXE).db
+	@$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $(EXE)
+#	@$(STRIP) --strip-unneeded --remove-section .comment $(EXE).db -o $(EXE)
+#	@protect $(EXE) +E
+
+libvstring.a:
+	make -f makefile_os4 -C libvstring/ 
+#	copy libvstring/libvstring.a libvstring.a
+	cp libvstring/libvstring.a libvstring.a
+
+%.o:
+	@echo "Compiling $@..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+application.o: application.c main.h application.h functionlist.h functionargument.h functioneditor.h classeditor.h attributelist.h libvstring/libvstring.h
+argumentlist.o: argumentlist.c main.h argumentlist.h libvstring/libvstring.h
+attributelist.o: attributelist.c main.h attributelist.h libvstring/libvstring.h
+classeditor.o: classeditor.c main.h classeditor.h functionlist.h functionargument.h application.h attributelist.h methodlist.h methodeditor.h libvstring/libvstring.h
+functioneditor.o: functioneditor.c main.h functioneditor.h functionargument.h functionlist.h application.h argumentlist.h libvstring/libvstring.h
+functionlist.o: functionlist.c main.h functionlist.h functionargument.h libvstring/libvstring.h
+main.o: main.c main.h application.h functionlist.h functionargument.h functioneditor.h argumentlist.h classeditor.h attributelist.h methodlist.h methodeditor.h
+methodeditor.o: methodeditor.c main.h methodeditor.h functionargument.h classeditor.h libvstring/libvstring.h
+methodlist.o: methodlist.c main.h methodlist.h libvstring/libvstring.h
+amigaos4_system.o: amigaos4_system.c
