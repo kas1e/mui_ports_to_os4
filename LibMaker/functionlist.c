@@ -310,7 +310,17 @@ IPTR FunctionListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 {
 	struct FunctionListData *d = INST_DATA(cl, obj);
 	struct FunctionEntry *fe = (struct FunctionEntry*)msg->entry;
+	
+	// The MUIM_List_Display method of the function list returns pointer to a local 
+	// variable which contains the string to be displayed. However, this pointer and the array are invalid 
+	// as soon as the function is left and hence the string might get overwritten by other random data 
+	// which eventually are displayed by MUI.
+	#ifdef __amigaos4__
+	static char type_aligned[48];
+	#else
 	char type_aligned[48];
+	#endif
+
 
 	if (!fe)
 	{
