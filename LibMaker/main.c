@@ -21,9 +21,16 @@
 #include <libraries/asl.h>
 #include <workbench/workbench.h>
 
+#ifdef __amigaos4__
+#include <proto/icon.h>
+#endif
 
 extern struct Library *SysBase;
 extern struct Library *DOSBase;
+
+#ifdef __amigaos4__
+struct DiskObject *disk_object = NULL; 
+#endif
 
 struct Library
 	*MUIMasterBase,
@@ -118,6 +125,9 @@ void FreeResources(void)
 #ifndef __amigaos4__	
 	if (LuaBase) CloseLibrary(LuaBase);
 #endif
+#ifdef __amigaos4__
+	if (disk_object) FreeDiskObject(disk_object);
+#endif
 	if (LocaleBase) CloseLibrary(LocaleBase);
 	if (UtilityBase) CloseLibrary(UtilityBase);
 	if (MUIMasterBase) CloseLibrary(MUIMasterBase);
@@ -134,6 +144,11 @@ Object *BuildGui(void)
 {
 	Object *application;
 
+	#ifdef __amigaos4__
+	char * _ProgramName = "PROGDIR:LibMaker";
+	disk_object = GetDiskObject(_ProgramName);
+	#endif
+	
 	application = NewObjectM(ApplicationClass->mcc_Class, 0,
 		MUIA_Application_Author, APP_AUTHOR,
 		MUIA_Application_Base, APP_BASE,
@@ -142,6 +157,9 @@ Object *BuildGui(void)
 		MUIA_Application_Title, APP_NAME,
 		MUIA_Application_UsedClasses, UsedClasses,
 		MUIA_Application_Version, "$VER: " APP_NAME " " APP_VER " (" APP_DATE ")",
+		#ifdef __amigaos4__		
+		MUIA_Application_DiskObject,    disk_object,
+		#endif
 	TAG_END);
 
 	return application;

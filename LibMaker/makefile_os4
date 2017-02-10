@@ -15,7 +15,7 @@ LDFLAGS = -gstabs -Llibvstring/
 OBJS = main.o application.o functionlist.o functioneditor.o argumentlist.o classeditor.o
 OBJS += attributelist.o methodlist.o methodeditor.o amigaos4_system.o
 EXE = LibMaker
-LIBS = -lvstring -llua
+LIBS = -lvstring -llua -lauto
 
 #########################################################################
 
