@@ -15,6 +15,10 @@
 #include <libraries/asl.h>
 #include <libvstring.h>
 
+#if defined(__amigaos4__)
+#include <dos/obsolete.h>
+#endif
+
 #include "generator.h"
 #include "support.h"
 #include "locale.h"
@@ -60,7 +64,7 @@ struct GeneratorData
 struct MUI_CustomClass *GeneratorClass;
 
 #ifdef __amigaos4__
-IPTR d_Generator(Class *cl,Object * obj,	Msg msg); 
+IPTR d_Generator(Class *cl,Object * obj,	Msg msg);
 #else
 IPTR d_Generator(void);
 static struct EmulLibEntry g_Generator = {TRAP_LIB, 0, (void(*)(void))d_Generator};
@@ -138,7 +142,7 @@ Object *create_root(void)
 			MUIA_Group_Child, MUI_NewObjectM(MUIC_String,
 				MUIA_ShortHelp, LS(MSG_PROJECT_MODULE_NAME_HELP,
 					"This name is used in functions or methods names, class pointer or library base"
-					" name and, after lowercasing, in file names."),				
+					" name and, after lowercasing, in file names."),
 				MUIA_CycleChain, TRUE,
 				MUIA_Frame, MUIV_Frame_String,
 				MUIA_String_MaxLen, 40,
@@ -175,7 +179,7 @@ Object *create_root(void)
 				MUIA_Radio_Entries, TodoRadioEntries,
 				MUIA_UserData, OBJ_REMARKS,
 			TAG_END),
-			
+
 			MUIA_Group_Child, MUI_NewObjectM(MUIC_Rectangle, TAG_END),
 		TAG_END),
 
@@ -193,7 +197,7 @@ Object *create_root(void)
 				MUIA_Text_HiChar, LS(MSG_PROJECT_GENERATE_BUTTON_HOTKEY, "g")[0],
 				MUIA_UserData, OBJ_GENBUT,
 			TAG_END),
-			
+
 			MUIA_Group_Child, MUI_NewObjectM(MUIC_Text,
 				MUIA_CycleChain, TRUE,
 				#ifdef __amigaos4__
@@ -210,7 +214,7 @@ Object *create_root(void)
 				MUIA_Text_HiChar, LS(MSG_PROJECT_SAVE_BUTTON_HOTKEY, "s")[0],
 				MUIA_UserData, OBJ_SAVBUT,
 			TAG_END),
-			
+
 			MUIA_Group_Child, MUI_NewObjectM(MUIC_Text,
 				MUIA_CycleChain, TRUE,
 				#ifdef __amigaos4__
@@ -228,9 +232,9 @@ Object *create_root(void)
 				MUIA_UserData, OBJ_LODBUT,
 			TAG_END),
 		TAG_END),
-#ifdef __amigaos4__	
+#ifdef __amigaos4__
 	TAG_DONE);
-#else	
+#else
 	End;
 #endif
 
@@ -260,7 +264,7 @@ static void generate_library_bases_definitions(Object *obj)
 	T("struct Library\n");
 	II; I; T("*SysBase,\n");
 	I; T("*IntuitionBase,\n");
-	I; T("*UtilityBase,\n");	
+	I; T("*UtilityBase,\n");
 	I; T("*MultimediaBase;\n");
 	IO;
 }
@@ -395,7 +399,7 @@ int GeneratorSetup(Class *cl, Object *obj, struct GENP_Setup *msg)
 	GetAttr(MUIA_String_Contents, d->ModuleName, (ULONG*)&filename);
 
 	if (lowercase_name = FmtNew(msg->NamePattern, filename))
-	{		
+	{
 		BPTR dir_lock;
 
 		strlow(lowercase_name);
@@ -556,7 +560,7 @@ IPTR GeneratorTextParam(Class *cl, Object *obj, struct GENP_TextParam *msg)
 		case PARAM_CLASSNAME:
 			param = (IPTR)d->ClassName;
 		break;
-		
+
 		case PARAM_CLASSNAMELC:
 			param = (IPTR)d->ClassNameSmall;
 		break;
@@ -820,22 +824,22 @@ IPTR GeneratorMethodHeader(UNUSED Class *cl, Object *obj, struct GENP_MethodHead
 
 		FmtNPut(line, (STRPTR)"/****** %s/%s ***********************************************************************",79, unit_name, msg->FuncName);
 		T(line);
-		
+
 		T("\n* NAME\n");
-		
-		FmtNPut(line, (STRPTR)"*   %s (v0) 0x%s\n", 79, msg->MethodName, msg->Identifier);		
+
+		FmtNPut(line, (STRPTR)"*   %s (v0) 0x%s\n", 79, msg->MethodName, msg->Identifier);
 		T(line);
-		
+
 		T("*\n* FUNCTION\n*\n*\n* NOTES\n*\n*\n* SEE ALSO\n*\n");
 		T("*\n******************************************************************************\n*\n*/\n\n");
 	}
-	
+
     TC("IPTR %s"); T(msg->FuncName); T("(Class *cl, Object *obj, ");
 	if (!(*msg->StructName)) T("Msg msg");
 	else { T("struct "); T(msg->StructName); T(" *msg"); }
 	T(")\n{\n");
 	II;
-	
+
 	if (msg->Instance)
 	{
 		I; TC("struct %sData *d = INST_DATA(cl, obj);\n");
@@ -1069,7 +1073,7 @@ IPTR GeneratorLibraryC(Class *cl, Object *obj, struct GENP_LibraryC *msg)
 		v = xget(findobj(d->LibGroup, OBJ_LIBG_VERSION), MUIA_String_Integer);
 		r = xget(findobj(d->LibGroup, OBJ_LIBG_REVISION), MUIA_String_Integer);
 		DoMethod(obj, GENM_Signature);
-		
+
         LEAD("includes");
 		T("#define __NOLIBBASE__\n\n");
 		T("#include <proto/exec.h>\n");
@@ -1107,7 +1111,7 @@ IPTR GeneratorLibraryC(Class *cl, Object *obj, struct GENP_LibraryC *msg)
 		T("Class *GetClass(void);\n");
 		T("APTR LibExpunge2(struct LibBase *lb);\n");
 		TRAIL("prototypes of basic library functions");
-		
+
 		LEAD("resident and jumptable");
 		T("extern const UBYTE VTag[];\n");
 		TLN("char LibName[] = \"%s\";\n\n\n");
@@ -1300,7 +1304,7 @@ IPTR d_Generator(void)
 	switch (msg->MethodID)
 	{
 		//printf("we inside of switch in d_Generator\n");
-		
+
 		case OM_NEW:                  return GeneratorNew(cl, obj, (struct opSet*)msg);
 		case OM_GET:                  return GeneratorGet(cl, obj, (struct opGet*)msg);
 		case GENM_Setup:              return GeneratorSetup(cl, obj, (struct GENP_Setup*)msg);
