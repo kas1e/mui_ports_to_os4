@@ -10,6 +10,8 @@
 #include "editor.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
+
 /// definitions
 
 struct MUI_CustomClass *EditorClass;
@@ -42,12 +44,8 @@ struct EDLP_Buttons
 ///
 /// dispatcher prototype
 
-#ifdef __amigaos4__
-intptr_t EditorDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-intptr_t EditorDispatcher(void);
-const struct EmulLibEntry EditorGate = {TRAP_LIB, 0, (void(*)(void))EditorDispatcher};
-#endif
+DISPATCHERPROTO(EditorDispatcher);
+
 ///
 /// EditorData
 
@@ -70,11 +68,7 @@ struct MUI_CustomClass *CreateEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Group, NULL, sizeof(struct EditorData), (APTR)&EditorDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Group, NULL, sizeof(struct EditorData), (APTR)&EditorGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Group, NULL, sizeof(struct EditorData), ENTRY(EditorDispatcher));
 	EditorClass = cl;
 	return cl;
 }
@@ -114,7 +108,7 @@ Object *create_buttons_row(void)
 		MUIA_Group_HorizSpacing, 0,
 		MUIA_Group_Child, MUI_NewObjectM(MUIC_Text,
 			MUIA_Text_Contents, LS(MSG_EDITOR_BUTTON_ADD, "Add"),
-			MUIA_Text_PreParse, "\33c",		
+			MUIA_Text_PreParse, "\33c",
 			MUIA_Text_HiChar, LS(MSG_EDITOR_BUTTON_ADD_HOTKEY, "a")[0],
 			MUIA_ControlChar, LS(MSG_EDITOR_BUTTON_ADD_HOTKEY, "a")[0],
 			MUIA_Frame, MUIV_Frame_Button,
@@ -128,7 +122,7 @@ Object *create_buttons_row(void)
 			MUIA_Text_Contents, LS(MSG_EDITOR_BUTTON_EDIT, "Edit"),
 			MUIA_Text_PreParse, "\33c",
 			MUIA_Text_HiChar, LS(MSG_EDITOR_BUTTON_EDIT_HOTKEY, "e")[0],
-			MUIA_ControlChar, LS(MSG_EDITOR_BUTTON_EDIT_HOTKEY, "e")[0],			
+			MUIA_ControlChar, LS(MSG_EDITOR_BUTTON_EDIT_HOTKEY, "e")[0],
 			MUIA_Frame, MUIV_Frame_Button,
 			MUIA_Background, MUII_ButtonBack,
 			MUIA_Font, MUIV_Font_Button,
@@ -226,7 +220,7 @@ IPTR EditorNew(Class *cl, Object *obj, struct opSet *msg)
 	list = (Object*)GetTagData(EDLA_List, 0, msg->ops_AttrList);
 
 	obj = DoSuperNewM(cl, obj,
-		MUIA_Group_VertSpacing, 0, 
+		MUIA_Group_VertSpacing, 0,
 		MUIA_Group_Child, listview = create_listview(list),
 		MUIA_Group_Child, brow = create_buttons_row(),
 	TAG_MORE, msg->ops_AttrList);
@@ -267,7 +261,7 @@ intptr_t EditorGet(Class *cl, Object *obj, struct opGet *msg)
 		case EDLA_WindowID:
 			*msg->opg_Storage = 0;
 		return TRUE;
-		
+
 		case EDLA_WindowTitle:
 			*(STRPTR*)msg->opg_Storage = (STRPTR)"?";
 		return TRUE;
@@ -305,7 +299,7 @@ IPTR EditorAction(Class *cl, Object *obj, struct EDLP_Action *msg)
 		}
 	}
 	else
-	{	
+	{
 		DoMethod(obj, EDLM_Clear);
 		d->InsertPos = MUIV_List_Insert_Bottom;
 	}
@@ -408,18 +402,10 @@ IPTR EditorBuildEditor(UNUSED Class *cl, UNUSED Object *obj)
 ///
 /// EditorDispatcher()
 
-#ifdef __amigaos4__
-intptr_t EditorDispatcher(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(EditorDispatcher)
 {
-#else
-intptr_t EditorDispatcher(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
-	{		
+	{
 		case OM_NEW:             return (EditorNew(cl, obj, (struct opSet*)msg));
 		case OM_GET:             return (EditorGet(cl, obj, (struct opGet*)msg));
 		case EDLM_Action:        return (EditorAction(cl, obj, (struct EDLP_Action*)msg));

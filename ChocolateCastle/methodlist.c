@@ -13,14 +13,11 @@
 #include "support.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
+
 struct MUI_CustomClass *MethodListClass;
 
-#ifdef __amigaos4__
-LONG MethodListDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-LONG MethodListDispatcher(void);
-const struct EmulLibEntry MethodListGate = {TRAP_LIB, 0, (void(*)(void))MethodListDispatcher};
-#endif
+DISPATCHERPROTO(MethodListDispatcher);
 
 /// MethodListData
 
@@ -36,11 +33,8 @@ struct MethodListData
 struct MUI_CustomClass *CreateMethodListClass(void)
 {
 	struct MUI_CustomClass *cl;
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct MethodListData), (APTR)&MethodListDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct MethodListData), (APTR)&MethodListGate);
-	#endif
+
+	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct MethodListData), ENTRY(MethodListDispatcher));
 	MethodListClass = cl;
 	return cl;
 }
@@ -176,16 +170,8 @@ IPTR MethodListInsertMethodTable(UNUSED Class *cl, Object *obj, struct MTLP_Inse
 ///
 /// MethodListDispatcher()
 
-#ifdef __amigaos4__
-LONG MethodListDispatcher(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(MethodListDispatcher)
 {
-#else
-LONG MethodListDispatcher(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                  return MethodListNew(cl, obj, (struct opSet*)msg);
@@ -196,7 +182,6 @@ LONG MethodListDispatcher(void)
 		default:                      return (DoSuperMethodA(cl, obj, msg));
 	}
 }
-
 
 ///
 

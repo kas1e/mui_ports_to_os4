@@ -15,17 +15,14 @@
 #include "generator.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
 
 struct MUI_CustomClass *MethodEditorClass;
 
 /// dispatcher prototype
 
-#ifdef __amigaos4__
-IPTR MethodEditorDispatcher(Class *cl,Object * obj,	Msg msg); 
-#else
-IPTR MethodEditorDispatcher(void);
-const struct EmulLibEntry MethodEditorGate = {TRAP_LIB, 0, (void(*)(void))MethodEditorDispatcher};
-#endif
+DISPATCHERPROTO(MethodEditorDispatcher);
+
 ///
 /// MethodEditorData
 
@@ -52,11 +49,8 @@ struct MethodEditorData
 struct MUI_CustomClass *CreateMethodEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, NULL, EditorClass, sizeof(struct MethodEditorData), (APTR)&MethodEditorDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, NULL, EditorClass, sizeof(struct MethodEditorData), (APTR)&MethodEditorGate);
-	#endif
+
+	cl = MUI_CreateCustomClass(NULL, NULL, EditorClass, sizeof(struct MethodEditorData), ENTRY(MethodEditorDispatcher));
 	MethodEditorClass = cl;
 	return cl;
 }
@@ -374,16 +368,9 @@ IPTR MethodEditorClear(Class *cl, Object *obj, UNUSED Msg msg)
 
 ///
 /// MethodEditorDispatcher()
-#ifdef __amigaos4__
-IPTR MethodEditorDispatcher(Class *cl,Object * obj,	Msg msg)
+
+DISPATCHER(MethodEditorDispatcher)
 {
-#else
-IPTR MethodEditorDispatcher(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
 	{
 		case OM_NEW:              return MethodEditorNew(cl, obj, (struct opSet*)msg);

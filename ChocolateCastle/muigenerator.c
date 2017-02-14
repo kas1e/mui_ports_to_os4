@@ -20,6 +20,9 @@
 #include "locale.h"
 
 #include <stdio.h>
+
+#include <SDI_hook.h>
+
 ///
 /// instance data
 
@@ -45,7 +48,7 @@ const char* PopularMuiSuperclasses[] =
 	"Area",
 	"Dataspace",
 	"Family",
-	"Gauge",	
+	"Gauge",
 	"Group",
 	"List",
 	"Notify",
@@ -84,12 +87,7 @@ const struct MethodEntry DefaultMethods[] = {
 
 struct MUI_CustomClass *MuiGeneratorClass;
 
-#ifdef __amigaos4__
-IPTR d_MuiGenerator(Class *cl,Object * obj,	Msg msg);
-#else
-IPTR d_MuiGenerator(void);
-static struct EmulLibEntry g_MuiGenerator = {TRAP_LIB, 0, (void(*)(void))d_MuiGenerator};
-#endif
+DISPATCHERPROTO(MuiGeneratorDispatcher);
 
 ///
 /// CreateMuiGeneratorClass()
@@ -97,16 +95,11 @@ static struct EmulLibEntry g_MuiGenerator = {TRAP_LIB, 0, (void(*)(void))d_MuiGe
 struct MUI_CustomClass *CreateMuiGeneratorClass(void)
 {
 	struct MUI_CustomClass *cl;
-	
-	#ifdef __amigaos4__
-	if (!(cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,  sizeof(struct MuiGeneratorData), &d_MuiGenerator))) {
-                printf("Could not create custom CreateMuiGeneratorClass\n");
-				return FALSE; 
+
+	if (!(cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,  sizeof(struct MuiGeneratorData), ENTRY(MuiGeneratorDispatcher))))
+	{
+		printf("Could not create custom MuiGeneratorClass\n");
 	}
-	#else
-	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,  sizeof(struct MuiGeneratorData), &g_MuiGenerator);
-	#endif
-	
 	MuiGeneratorClass = cl;
 	return cl;
 }
@@ -128,7 +121,7 @@ void DeleteMuiGeneratorClass(void)
 static Object *create_my_group(Object *obj, struct MuiGeneratorData *d)
 {
 	Object *o = NULL;
-	
+
 	o = MUI_NewObjectM(MUIC_Group,
 		MUIA_Group_Child, MUI_NewObjectM(MUIC_Group,
 			MUIA_Frame, MUIV_Frame_Group,
@@ -145,7 +138,7 @@ static Object *create_my_group(Object *obj, struct MuiGeneratorData *d)
 				MUIA_Group_Child, RectangleObject,
 				TAG_END),
 			TAG_END),
-			
+
 			MUIA_Group_Child, d->SuperclassPageGroup = MUI_NewObjectM(MUIC_Group,
 				MUIA_Group_PageMode, TRUE,
 				MUIA_Group_Child, MUI_NewObjectM(MUIC_Group,
@@ -210,7 +203,7 @@ static Object *create_my_group(Object *obj, struct MuiGeneratorData *d)
 	TAG_END);
 
 	if(o==NULL) {printf("damn! object in MuiGenerator == null !\n");};
-	
+
 	return o;
 }
 
@@ -351,7 +344,7 @@ IPTR MuiGeneratorNew(Class *cl, Object *obj, struct opSet *msg)
 
 		if (!newobj) CoerceMethod(cl, obj, OM_DISPOSE);
 	}
-	
+
 	return (IPTR)newobj;
 
 }
@@ -426,7 +419,7 @@ intptr_t MuiGeneratorGenerate(Class *cl, Object *obj, Msg msg)
 		II; I; T("struct MUI_CustomClass *cl;\n\n");
 		I; T("cl = MUI_CreateCustomClass(NULL, ");
 		superclass_type = xget(d->SuperclassTypeRadio, MUIA_Radio_Active);
-		
+
 		if (superclass_type == SUPERCLASS_TYPE_PRIVATE)
 		{
 			s = (char*)xget(d->SuperclassPointerString, MUIA_String_Contents);
@@ -588,21 +581,12 @@ IPTR MuiGeneratorLoad(Class *cl, Object *obj, struct GENP_Load *msg)
 
 
 ///
-/// d_MuiGenerator()
+/// MuiGeneratorDispatcher()
 
-#ifdef __amigaos4__
-IPTR d_MuiGenerator(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(MuiGeneratorDispatcher)
 {
-#else
-IPTR d_MuiGenerator(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-		
 	switch (msg->MethodID)
-	{		
+	{
 		case OM_NEW:  return (MuiGeneratorNew(cl, obj, (struct opSet*)msg));
 		case OM_DISPOSE:  return (MuiGeneratorDispose(cl, obj, msg));
 		case OM_GET:  return (MuiGeneratorGet(cl, obj, (struct opGet*)msg));
@@ -612,7 +596,6 @@ IPTR d_MuiGenerator(void)
 		default:  return (DoSuperMethodA(cl, obj, msg));
 	}
 }
-
 
 ///
 

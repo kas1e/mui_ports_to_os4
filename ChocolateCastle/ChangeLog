@@ -2,8 +2,10 @@
 ChocolateCastle - ChangeLog
 ---------------------------
 
-2017-02-15 Thore Böckelmann <tboeckel@gmx.de>
+2017-02-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * castleapp.c: added OM_DISPOSE method to dispose the iconification icon
     instead of doing this repeatedly when closing a project window. This closes
     #1.
+  * all: converted all dispatcher functions to use the system-independent SDI
+    macros.

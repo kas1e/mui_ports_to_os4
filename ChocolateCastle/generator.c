@@ -23,6 +23,8 @@
 #include "support.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
+
 #define OBJ_DIR             0x6EDA4894   // directory string gadget
 #define OBJ_CLASS           0x6EDA9373   // class name string gadget
 #define OBJ_GENBUT          0x6EDA9002   // generate text button
@@ -63,22 +65,14 @@ struct GeneratorData
 
 struct MUI_CustomClass *GeneratorClass;
 
-#ifdef __amigaos4__
-IPTR d_Generator(Class *cl,Object * obj,	Msg msg);
-#else
-IPTR d_Generator(void);
-static struct EmulLibEntry g_Generator = {TRAP_LIB, 0, (void(*)(void))d_Generator};
-#endif
+DISPATCHERPROTO(GeneratorDispatcher);
+
 /// CreateGeneratorClass()
 
 struct MUI_CustomClass *CreateGeneratorClass(void)
 {
 	struct MUI_CustomClass *cl;
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct GeneratorData), &d_Generator);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct GeneratorData), &g_Generator);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct GeneratorData), ENTRY(GeneratorDispatcher));
 	GeneratorClass = cl;
 	return cl;
 }
@@ -1289,18 +1283,10 @@ IPTR GeneratorTrailingComment(Class *cl, Object *obj, UNUSED struct GENP_Trailin
 
 ///
 
-/// d_Generator()
+/// GeneratorDispatcher()
 
-#ifdef __amigaos4__
-IPTR d_Generator(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(GeneratorDispatcher)
 {
-#else
-IPTR d_Generator(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
 	{
 		//printf("we inside of switch in d_Generator\n");

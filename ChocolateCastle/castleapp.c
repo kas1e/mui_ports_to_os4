@@ -19,6 +19,8 @@
 #include "reggenerator.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
+
 struct MUI_CustomClass *CastleAppClass;
 
 #ifdef __amigaos4__
@@ -26,22 +28,13 @@ struct DiskObject *disk_object = NULL;
 #endif
 
 
-#ifdef __amigaos4__
-intptr_t d_CastleApp(Class *cl,Object * obj,	Msg msg);
-#else
-LONG d_CastleApp(void);
-static struct EmulLibEntry g_CastleApp = {TRAP_LIB, 0, (void(*)(void))d_CastleApp};
-#endif
+DISPATCHERPROTO(CastleAppDispatcher);
 
 struct MUI_CustomClass *CreateCastleAppClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct CastleAppData), &d_CastleApp);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct CastleAppData), &g_CastleApp);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct CastleAppData), ENTRY(CastleAppDispatcher));
 	CastleAppClass = cl;
 	return cl;
 }
@@ -150,20 +143,12 @@ intptr_t CastleAppRemoveGenerator(UNUSED Class *cl, Object *obj, struct CAAP_Rem
   return 0;
 }
 
-#ifdef __amigaos4__
-intptr_t d_CastleApp(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(CastleAppDispatcher)
 {
-#else
-intptr_t d_CastleApp(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                return (CastleAppNew(cl, obj, (struct opSet*)msg));
-		case OM_DISPOSE:            return (CastleAppDispose(cl, obj, (struct opSet*)msg));
+		case OM_DISPOSE:            return (CastleAppDispose(cl, obj, msg));
 		case CAAM_Generate:         return(CastleAppGenerate(cl, obj, (struct opCAA_Generate*)msg));
 		case CAAM_RemoveGenerator:  return(CastleAppRemoveGenerator(cl, obj, (struct CAAP_RemoveGenerator*)msg));
 		default:                    return (DoSuperMethodA(cl, obj, msg));

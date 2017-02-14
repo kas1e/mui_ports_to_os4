@@ -19,6 +19,8 @@
 #include "methodlist.h"
 #include "locale.h"
 
+#include <SDI_hook.h>
+
 ///
 /// class data
 
@@ -31,12 +33,7 @@ struct RegGeneratorData
 
 struct MUI_CustomClass *RegGeneratorClass;
 
-#ifdef __amigaos4__
-IPTR d_RegGenerator(Class *cl,Object * obj,	Msg msg); 
-#else
-IPTR d_RegGenerator(void);
-static struct EmulLibEntry g_RegGenerator = {TRAP_LIB, 0, (void(*)(void))d_RegGenerator};
-#endif
+DISPATCHERPROTO(RegGeneratorDispatcher);
 
 
 #define OBJ_EXTCHECK     0x6EDA6F36   // external class checkmark
@@ -63,12 +60,7 @@ struct MUI_CustomClass *CreateRegGeneratorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,sizeof(struct RegGeneratorData), &d_RegGenerator);
-	#else
-	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,sizeof(struct RegGeneratorData), &g_RegGenerator);
-	#endif
-	
+	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,sizeof(struct RegGeneratorData), ENTRY(RegGeneratorDispatcher));
 	RegGeneratorClass = cl;
 	return cl;
 }
@@ -699,18 +691,10 @@ IPTR RegGeneratorLoad(Class *cl, Object *obj, struct GENP_Load *msg)
 
 
 ///
-/// d_RegGenerator()
+/// RegGeneratorDispatcher()
 
-#ifdef __amigaos4__
-IPTR d_RegGenerator(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(RegGeneratorDispatcher)
 {
-#else
-IPTR d_RegGenerator(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
 	switch (msg->MethodID)
 	{
 		case OM_NEW:  return (RegGeneratorNew(cl, obj, (struct opSet*)msg));
@@ -722,7 +706,6 @@ IPTR d_RegGenerator(void)
 		default:  return (DoSuperMethodA(cl, obj, msg));
 	}
 }
-
 
 ///
 
