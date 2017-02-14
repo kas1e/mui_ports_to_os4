@@ -1,3 +1,6 @@
+#ifndef LIBVSTRING_H
+#define LIBVSTRING_H 1
+
 /* vstring.h */
 
 //#ifndef __NOLIBBASE__
@@ -7,7 +10,11 @@
 #include <exec/types.h>
 #include <stdarg.h>
 
+#if defined(__amigaos4__)
 extern struct Library *SysBase;
+#else
+extern struct ExecBase *SysBase;
+#endif
 
 #ifndef __typedef_VOID_FUNC
 #define __typedef_VOID_FUNC
@@ -25,7 +32,7 @@ STRPTR NewRawDoFmt(CONST_STRPTR FormatString, VOID_FUNC PutChProc, APTR PutChDat
 
 APTR AllocVecTaskPooled(ULONG byteSize);
 void FreeVecTaskPooled(APTR memory);
-#endif  
+#endif
 
 
 ULONG FmtLen(STRPTR fmt, ...);
@@ -42,3 +49,5 @@ VOID FreeStrArray(STRPTR *array);
 ULONG StrArrayLen(STRPTR *array);
 
 #define StrFree(s) FreeVecTaskPooled(s)
+
+#endif /* LIBVSTRING_H */
