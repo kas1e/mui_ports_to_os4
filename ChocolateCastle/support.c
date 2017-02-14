@@ -251,7 +251,7 @@ Object* DoSuperNewM(Class *cl, Object *obj, ...)
 ///
 /// MUI_NewObjectM()
 
-Object* MUI_NewObjectM(char *classname, ...)
+Object* MUI_NewObjectM(const char *classname, ...)
 {
 	va_list args, args2;
 	int argc = 0;
@@ -297,7 +297,7 @@ Object* MUI_NewObjectM(char *classname, ...)
 ///
 /// NewObjectM()
 
-Object* NewObjectM(Class *cl, char *classname, ...)
+Object* NewObjectM(Class *cl, const char *classname, ...)
 {
 	va_list args, args2;
 	int argc = 0;

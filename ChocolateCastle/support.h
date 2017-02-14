@@ -99,9 +99,9 @@ void unexpected_eof(Object *obj, struct Parser *p);
 void syntax_error(Object *obj, struct Parser *p);
 
 
-Object* MUI_NewObjectM(char *classname, ...);
+Object* MUI_NewObjectM(const char *classname, ...);
 Object* DoSuperNewM(Class *cl, Object *obj, ...);
-Object* NewObjectM(Class *cl, char *classname, ...);
+Object* NewObjectM(Class *cl, const char *classname, ...);
 
 /*############################################################################*/
 /*############################################################################*/
