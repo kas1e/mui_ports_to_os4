@@ -106,7 +106,7 @@ Object* NewObjectM(Class *cl, char *classname, ...);
 /*############################################################################*/
 /*############################################################################*/
 
-inline extern IPTR strln(STRPTR s)
+static inline IPTR strln(STRPTR s)
 {
 	STRPTR v = s;
 
@@ -117,7 +117,7 @@ inline extern IPTR strln(STRPTR s)
 /*############################################################################*/
 /*############################################################################*/
 
-inline extern void newlist(struct MinList *list)
+static inline void newlist(struct MinList *list)
 {
 	list->mlh_Head = (struct MinNode*)&list->mlh_Tail;
 	list->mlh_Tail = NULL;
