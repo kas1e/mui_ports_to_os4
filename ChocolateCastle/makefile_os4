@@ -5,9 +5,8 @@
 CC     = ppc-amigaos-gcc
 CFLAGS = -W -Wall -O2 -Wpointer-arith -Wno-parentheses -fno-strict-aliasing
 BUILD = $(shell svnversion)
-CFLAGS += -D__USE_INLINE__
-CFLAGS += -D__USE_INLINE__ -Ilibvstring/
-LDFLAGS = -Llibvstring/
+CFLAGS += -mcrt=newlib -D__USE_INLINE__ -Ilibvstring -Iinclude
+LDFLAGS += -mcrt=newlib -Llibvstring
 STRIP = ppc-amigaos-strip
 
 #########################################################################
@@ -40,7 +39,7 @@ startmsg:
 program: $(OBJS)
 	@echo "Linking release executable..."
 #	@$(CC) $(CFLAGS) -s $(LDFLAGS) $(OBJS) $(LIBS) -o $(EXE)
-	@$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $(EXE) 
+	@$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $(EXE)
 #	@$(STRIP) --strip-unneeded --remove-section .comment $(EXE).tmp -o $(EXE)
 #	@delete $(EXE).tmp QUIET
 #	@protect $(EXE) +E
