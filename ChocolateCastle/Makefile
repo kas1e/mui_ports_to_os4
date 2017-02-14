@@ -6,7 +6,7 @@
 #
 # Example:
 #
-# # to explicitly compile for AmigaOS3
+# # to explicitly compile for AmigaOS3 with debugging
 # > make OS=os3
 #
 # # to compile for AmigaOS4 but without debugging
