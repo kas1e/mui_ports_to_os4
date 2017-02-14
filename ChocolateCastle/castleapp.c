@@ -22,7 +22,7 @@
 struct MUI_CustomClass *CastleAppClass;
 
 #ifdef __amigaos4__
-struct DiskObject *disk_object = NULL; 
+struct DiskObject *disk_object = NULL;
 #endif
 
 
@@ -56,12 +56,11 @@ void DeleteCastleAppClass(void)
 intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	Object *newobj = NULL;
-	
+
 #ifdef __amigaos4__
-	char * _ProgramName = "PROGDIR:ChocolateCastle";
-	disk_object = GetDiskObject(_ProgramName);
+	disk_object = GetDiskObject("PROGDIR:ChocolateCastle");
 #endif
-	
+
 	obj = DoSuperNewM(cl, obj,
 		MUIA_Application_Author,        "Grzegorz Kraszewski",
 		MUIA_Application_Base,          "CHOCOCASTLE",
@@ -69,9 +68,9 @@ intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 		MUIA_Application_Description,   LS(MSG_APPLICATION_DESCRIPTION, "Code template generator"),
 		MUIA_Application_Title,         "ChocolateCastle",
 		MUIA_Application_Version,       "$VER: ChocolateCastle " CHC_VERSION " (" CHC_DATE ")",
-#ifdef __amigaos4__		
-		MUIA_Application_DiskObject,    disk_object, 
-#endif		
+#ifdef __amigaos4__
+		MUIA_Application_DiskObject,    disk_object,
+#endif
 	TAG_MORE, (ULONG)msg->ops_AttrList);
 
 	if (obj)
@@ -81,6 +80,18 @@ intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 		if (!newobj) CoerceMethod(cl, obj, OM_DISPOSE);
 	}
 	return (intptr_t)newobj;
+}
+
+intptr_t CastleAppDispose(Class *cl, Object *obj, Msg msg)
+{
+	intptr_t rc = DoSuperMethodA(cl, obj, msg);
+
+#ifdef __amigaos4__
+	// dispose the icon after the application definitely ceased to exist
+	if (disk_object) FreeDiskObject(disk_object);
+#endif
+
+	return rc;
 }
 
 
@@ -95,18 +106,18 @@ intptr_t CastleAppGenerate(Class *cl, Object *obj, struct opCAA_Generate *msg)
 		case PROJECT_TYPE_MUI:      gen_class = MuiGeneratorClass;  break;
 		case PROJECT_TYPE_REGGAE:   gen_class = RegGeneratorClass;  break;
 	}
-		
+
 	GenWin = NewObject(gen_class->mcc_Class, NULL, TAG_END);
 
 	// added one more NULL pointer check.
 	if (GenWin == NULL) {
 		printf("damn! GenWin sucked!\n");
-	}	
-	
+	}
+
 	if (GenWin)
 	{
 		DoMethod(obj, OM_ADDMEMBER, (intptr_t)GenWin);
-		
+
 		DoMethod(GenWin, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2,
 		 MUIM_Application_ReturnID, MUIV_Application_ReturnID_RemGen);
 
@@ -129,10 +140,7 @@ intptr_t CastleAppRemoveGenerator(UNUSED Class *cl, Object *obj, struct CAAP_Rem
 	xset(msg->Generator, MUIA_Window_Open, FALSE);
 	DoMethod(obj, OM_REMMEMBER, (intptr_t)msg->Generator);
 	MUI_DisposeObject(msg->Generator);
-#ifdef __amigaos4__
-	if (disk_object) FreeDiskObject(disk_object);
-#endif
-	
+
 	/*------------------------------------------------------------------------*/
 	/* Added 22.01.2008: Enable main window after generator window is closed. */
 	/*------------------------------------------------------------------------*/
@@ -155,6 +163,7 @@ intptr_t d_CastleApp(void)
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                return (CastleAppNew(cl, obj, (struct opSet*)msg));
+		case OM_DISPOSE:            return (CastleAppDispose(cl, obj, (struct opSet*)msg));
 		case CAAM_Generate:         return(CastleAppGenerate(cl, obj, (struct opCAA_Generate*)msg));
 		case CAAM_RemoveGenerator:  return(CastleAppRemoveGenerator(cl, obj, (struct CAAP_RemoveGenerator*)msg));
 		default:                    return (DoSuperMethodA(cl, obj, msg));
