@@ -3,9 +3,11 @@
 #include "libvstring.h"
 
 
-STRPTR* CloneStrArray(STRPTR *array)
+STRPTR* CloneStrArray(CONST_STRPTR *array)
 {
-	STRPTR *p0, *p1,  *copy;
+	CONST_STRPTR *p0;
+	STRPTR *p1;
+	STRPTR *copy;
 
 	/* Allocate array. */
 

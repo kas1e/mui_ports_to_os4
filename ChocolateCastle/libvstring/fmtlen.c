@@ -7,7 +7,7 @@
 #include <exec/rawfmt.h>
 #endif
 
-ULONG FmtLen(STRPTR fmt, ...)
+ULONG FmtLen(CONST_STRPTR fmt, ...)
 {
 	va_list args;
 	ULONG l = 0;

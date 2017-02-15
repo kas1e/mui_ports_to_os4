@@ -3,9 +3,9 @@
 #include "libvstring.h"
 
 
-ULONG StrArrayLen(STRPTR *array)
+ULONG StrArrayLen(CONST_STRPTR *array)
 {
-	STRPTR *p;
+	CONST_STRPTR *p;
 	ULONG len;
 
 	for (p = array, len = 0; *p; p++) len++;

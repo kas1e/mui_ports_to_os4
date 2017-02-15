@@ -3,7 +3,7 @@
 #include "libvstring.h"
 
 
-STRPTR StrCopy(STRPTR s, STRPTR d)
+STRPTR StrCopy(CONST_STRPTR s, STRPTR d)
 {
 	while (*d++ = *s++);
 

@@ -34,7 +34,7 @@ static APTR putchproc(APTR mx, UBYTE chr)
 	return mx;
 }
 
-LONG FmtNPut(STRPTR dest, STRPTR fmt, LONG maxlen, ...)
+LONG FmtNPut(STRPTR dest, CONST_STRPTR fmt, LONG maxlen, ...)
 {
 	va_list args;
 

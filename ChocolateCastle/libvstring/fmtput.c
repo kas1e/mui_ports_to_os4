@@ -7,7 +7,7 @@
 #include <exec/rawfmt.h>
 #endif
 
-VOID FmtPut(STRPTR dest, STRPTR fmt, ...)
+VOID FmtPut(STRPTR dest, CONST_STRPTR fmt, ...)
 {
 	va_list args;
 

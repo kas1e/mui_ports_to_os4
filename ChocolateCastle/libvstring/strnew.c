@@ -5,7 +5,7 @@
 #include <proto/exec.h>
 
 
-STRPTR StrNew(STRPTR str)
+STRPTR StrNew(CONST_STRPTR str)
 {
 	STRPTR n = NULL;
 

@@ -3,9 +3,9 @@
 #include "libvstring.h"
 
 
-ULONG StrLen(STRPTR s)
+ULONG StrLen(CONST_STRPTR s)
 {
-	STRPTR v = s;
+	CONST_STRPTR v = s;
 
 	while (*v) v++;
 	return (ULONG)(v - s);  // will fail for strings longer than 4 GB ;-)

@@ -7,7 +7,7 @@
 #include <exec/rawfmt.h>
 #endif
 
-STRPTR VFmtNew(STRPTR fmt, va_list args)
+STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 {
 	ULONG l = 0;
 	STRPTR s;
