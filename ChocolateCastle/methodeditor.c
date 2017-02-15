@@ -40,7 +40,7 @@ struct MethodEditorData
 	Object *IdentifierReadOnly;  // method id (read-only)
 	Object *Generator;           // parent generator
 	BOOL    Standard;            // standard methods are only partially editable
-	UBYTE   WinTitle[144];       // space for window title
+	char    WinTitle[144];       // space for window title
 };
 
 ///
@@ -69,7 +69,7 @@ void DeleteMethodEditorClass(void)
 
 IPTR MethodEditorNew(Class *cl, Object *obj, struct opSet *msg)
 {
-	if (obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg))
+	if ((obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg)) != NULL)
 	{
 		struct MethodEditorData *d = INST_DATA(cl, obj);
 
@@ -200,7 +200,7 @@ IPTR MethodEditorListToWindow(Class *cl, Object *obj, struct EDLP_ListToWindow *
 	Object *list, *window;
 	struct MethodEntry *me;
 
-	if (list = (Object*)xget(obj, EDLA_List))
+	if ((list = (Object *)xget(obj, EDLA_List)) != NULL)
 	{
 		DoMethod(list, MUIM_List_GetEntry, msg->Position, (IPTR)&me);
 
@@ -211,7 +211,7 @@ IPTR MethodEditorListToWindow(Class *cl, Object *obj, struct EDLP_ListToWindow *
 			window = (Object*)xget(obj, EDLA_Window);
 			module_name = (STRPTR)xget(d->Generator, GENA_UnitName);
 			xset(d->Function, MUIA_String_Contents, me->Function);
-			FmtNPut(d->WinTitle, (STRPTR)"%s/%s()", 144, module_name, me->Name);
+			FmtNPut(d->WinTitle, "%s/%s()", 144, module_name, me->Name);
 			xset(window, MUIA_Window_Title, d->WinTitle);
 
 			if (me->Standard)      // One of default methods.
@@ -256,7 +256,7 @@ IPTR MethodEditorWindowToList(Class *cl, Object *obj, struct EDLP_WindowToList *
 	me.Standard = d->Standard;
 	window = (Object*)xget(obj, EDLA_Window);
 
-	if (list = (Object*)xget(obj, EDLA_List))
+	if ((list = (Object *)xget(obj, EDLA_List)) != NULL)
 	{
 		if (me.Standard)
 		{
@@ -359,7 +359,7 @@ IPTR MethodEditorClear(Class *cl, Object *obj, UNUSED Msg msg)
 	xset(d->Identifier, MUIA_String_Contents, "");
 	window = (Object*)xget(obj, EDLA_Window);
 	module_name = (STRPTR)xget(d->Generator, GENA_UnitName);
-	FmtNPut(d->WinTitle, (STRPTR)"%s/%s", 144, module_name,
+	FmtNPut(d->WinTitle, "%s/%s", 144, module_name,
      LS(MSG_METHOD_EDITOR_WINDOW_TITLE_NEW_METHOD, "new method"));
 	xset(window, MUIA_Window_Title, d->WinTitle);
     return 0;
