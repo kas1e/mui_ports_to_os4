@@ -462,3 +462,29 @@ void FreeVecTaskPooled(APTR memory)
     free(memory);
 }
 
+
+APTR AllocVecPooled(APTR pool, ULONG size)
+{
+	ULONG *mem;
+
+	size += sizeof(*mem);
+
+	if((mem = (ULONG *)AllocPooled(pool, size)) != NULL)
+		*mem++ = size;
+
+	return (APTR)mem;
+}
+
+
+void FreeVecPooled(APTR pool, APTR mem)
+{
+	if(mem != NULL)
+	{
+		ULONG *p, size;
+
+		p = (ULONG *)mem;
+		size = *--p;
+
+		FreePooled(pool, p, size);
+	}
+}
