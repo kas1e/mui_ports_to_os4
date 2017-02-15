@@ -761,7 +761,7 @@ IPTR GeneratorLoad(Class *cl, Object *obj, struct GENP_Load *msg)
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(msg->LineBuf, (STRPTR)"MODULE/K,DRAWER/K,AUTODOCS/K/N,TODO/K/N", msg->Parser))
+		if (check_pattern(msg->LineBuf, "MODULE/K,DRAWER/K,AUTODOCS/K/N,TODO/K/N", msg->Parser))
 		{
 			xset(d->ModuleName, MUIA_String_Contents, msg->Parser->params[0]);
 			xset(d->DestDir, MUIA_String_Contents, msg->Parser->params[1]);

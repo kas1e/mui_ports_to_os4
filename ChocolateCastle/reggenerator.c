@@ -146,7 +146,7 @@ static BOOL load_method(Class *cl, Object *obj, struct GENP_Load *msg)
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(msg->LineBuf, (STRPTR)"METHOD/K/A,FUNCTION/K/A,STRUCTURE/K/A,ID/K/A,STD/K/N/A", msg->Parser))
+		if (check_pattern(msg->LineBuf, "METHOD/K/A,FUNCTION/K/A,STRUCTURE/K/A,ID/K/A,STD/K/N/A", msg->Parser))
 		{
 			struct MethodEntry me;
 
@@ -176,7 +176,7 @@ static BOOL load_externity(Class *cl, Object *obj, struct GENP_Load *msg)
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(msg->LineBuf, (STRPTR)"EXTERNAL/K/N/A", msg->Parser))
+		if (check_pattern(msg->LineBuf, "EXTERNAL/K/N/A", msg->Parser))
 		{
 			xset(d->ExtClassCheck, MUIA_Selected, *((LONG*)msg->Parser->params[0]));
 			result = TRUE;
@@ -198,7 +198,7 @@ static BOOL load_lib_settings(UNUSED Class *cl, Object *obj, struct GENP_Load *m
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(msg->LineBuf, (STRPTR)"LIBNAME/K/A,VERSION/K/N/A,REVISION/K/N/A,COPYRIGHT/K/A", msg->Parser))
+		if (check_pattern(msg->LineBuf, "LIBNAME/K/A,VERSION/K/N/A,REVISION/K/N/A,COPYRIGHT/K/A", msg->Parser))
 		{
 			xset(findobj(obj, OBJ_LIBG_NAME), MUIA_String_Contents, (STRPTR)msg->Parser->params[0]);
 			xset(findobj(obj, OBJ_LIBG_VERSION), MUIA_String_Integer, *((LONG*)msg->Parser->params[1]));
