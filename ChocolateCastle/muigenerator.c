@@ -397,13 +397,7 @@ intptr_t MuiGeneratorGenerate(Class *cl, Object *obj, Msg msg)
 		TC("struct MUI_CustomClass *%sClass;\n\n");
 
 		T("/// dispatcher prototype\n\n");
-		#ifdef __amigaos4__
-		TC("IPTR %sDispatcher(Class *cl,Object * obj,Msg msg);\n");
-		#else
-		TC("IPTR %sDispatcher(void);\n");
-		TC("const struct EmulLibEntry %sGate = ");
-		TC("{TRAP_LIB, 0, (void(*)(void))%sDispatcher};\n");
-		#endif
+		TC("DISPATCHERPROTO(%sDispatcher);\n");
 		T("\n\n///\n");
 
 		TC("/// %sData\n\n");
@@ -431,12 +425,7 @@ intptr_t MuiGeneratorGenerate(Class *cl, Object *obj, Msg msg)
 			T("MUIC_"); T(s); T(", NULL, ");
 		}
 
-		TC("sizeof(struct %sData), ");
-		#ifdef __amigaos4__
-		TC("(APTR)&%sDispatcher);\n");
-		#else
-		TC("(APTR)&%sGate);\n");
-		#endif
+		TC("sizeof(struct %sData), ENTRY(%sDispatcher));\n");
 		I; TC("%sClass = cl;\n"); I; T("return cl;\n"); IO; T("}\n\n\n");
 		T("///\n");
 
