@@ -9,7 +9,7 @@ STRPTR StrNew(CONST_STRPTR str)
 {
 	STRPTR n = NULL;
 
-	if (n = internal_alloc(StrLen(str) + 1))
+	if ((n = AllocVecTaskPooled(StrLen(str) + 1)) != NULL)
 	{
 		StrCopy(str, n);
 	}

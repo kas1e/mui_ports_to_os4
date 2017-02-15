@@ -3,10 +3,10 @@
 #include "libvstring.h"
 
 
-LONG StrArrayLen(STRPTR *array)
+ULONG StrArrayLen(CONST_STRPTR *array)
 {
-	STRPTR *p;
-	LONG len;
+	CONST_STRPTR *p;
+	ULONG len;
 
 	for (p = array, len = 0; *p; p++) len++;
 

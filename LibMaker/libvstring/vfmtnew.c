@@ -3,10 +3,9 @@
 #include "libvstring.h"
 
 #include <proto/exec.h>
-#ifndef __amigaos4__
+#if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
 #endif
-
 
 STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 {
@@ -15,12 +14,13 @@ STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 	va_list copy;
 
 	__va_copy(copy, args);
-	VNewRawDoFmt(fmt, (APTR(*)(APTR, UBYTE))RAWFMTFUNC_COUNT, (STRPTR)&l, args);
 
-	if (s = internal_alloc(l + 1))
+	VNewRawDoFmt(fmt, RAWFMTFUNC_COUNT, (STRPTR)&l, args);
+
+	if ((s = AllocVecTaskPooled(l + 1)) != NULL)
 	{
 		VNewRawDoFmt(fmt, RAWFMTFUNC_STRING, s, copy);
 	}
+
 	return s;
 }
-

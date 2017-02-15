@@ -9,7 +9,7 @@ void FreeStrArray(STRPTR *array)
 {
 	STRPTR *p0;
 
-	for (p0 = array; *p0; p0++) StrFree(*p0);
-	StrFree(array);
+	for (p0 = array; *p0; p0++) FreeVecTaskPooled(*p0);
+	FreeVecTaskPooled(array);
 }
 

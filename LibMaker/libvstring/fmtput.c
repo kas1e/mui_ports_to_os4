@@ -3,10 +3,9 @@
 #include "libvstring.h"
 
 #include <proto/exec.h>
-#ifndef __amigaos4__
+#if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
 #endif
-
 
 VOID FmtPut(STRPTR dest, CONST_STRPTR fmt, ...)
 {
