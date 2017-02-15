@@ -36,7 +36,7 @@ static inline intptr_t xget(Object *obj, uint32_t attr)
 {
 	uintptr_t v = 0;
 
-	GetAttr(attr, obj, &v);
+	GetAttr(attr, obj, (APTR)&v);
 	return (intptr_t)v;
 }
 

@@ -53,7 +53,7 @@ void error(STRPTR msg, ...)
 	va_list args;
 
 	va_start(args, msg);
-	if (s = VFmtNew(msg, args))
+	if ((s = VFmtNew(msg, args)) != NULL)
 	{
 		PutStr((STRPTR)s);
 		StrFree(s);
