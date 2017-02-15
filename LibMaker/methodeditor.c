@@ -17,12 +17,7 @@
 
 struct MUI_CustomClass *MethodEditorClass;
 
-#ifdef __amigaos4__
-IPTR MethodEditorDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-IPTR MethodEditorDispatcher(void);
-const struct EmulLibEntry MethodEditorGate = {TRAP_LIB, 0, (void(*)(void))MethodEditorDispatcher};
-#endif
+DISPATCHERPROTO(MethodEditorDispatcher);
 
 static CONST_STRPTR TypicalTypes[] = {
 	"VOID",
@@ -66,11 +61,7 @@ struct MUI_CustomClass *CreateMethodEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct MethodEditorData), (APTR)&MethodEditorDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct MethodEditorData), (APTR)&MethodEditorGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct MethodEditorData), ENTRY(MethodEditorDispatcher));
 	MethodEditorClass = cl;
 	return cl;
 }
@@ -357,17 +348,8 @@ IPTR MethodEditorUpdateEntry(Class *cl, Object *obj, struct MEDP_UpdateEntry *ms
 // MethodEditorDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-IPTR MethodEditorDispatcher(Class *cl,Object * obj,	Msg msg)
-#else
-IPTR MethodEditorDispatcher(void)
+DISPATCHER(MethodEditorDispatcher)
 {
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-{
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                  return MethodEditorNew(cl, obj, (struct opSet*)msg);

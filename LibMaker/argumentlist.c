@@ -13,17 +13,12 @@
 
 struct MUI_CustomClass *ArgumentListClass;
 
-#ifdef __amigaos4__
-LONG ArgumentListDispatcher(Class *cl, Object *obj,	Msg msg);
-#else
-LONG ArgumentListDispatcher(void);
-const struct EmulLibEntry ArgumentListGate = {TRAP_LIB, 0, (void(*)(void))ArgumentListDispatcher};
-#endif
+DISPATCHERPROTO(ArgumentListDispatcher);
 
 struct ArgumentListData
 {
 	char M68kRegBuf[3];
-};	
+};
 
 
 //==============================================================================================
@@ -33,11 +28,8 @@ struct ArgumentListData
 struct MUI_CustomClass *CreateArgumentListClass(void)
 {
 	struct MUI_CustomClass *cl;
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct ArgumentListData), (APTR)&ArgumentListDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct ArgumentListData), (APTR)&ArgumentListGate);
-	#endif
+
+	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct ArgumentListData), ENTRY(ArgumentListDispatcher));
 	ArgumentListClass = cl;
 	return cl;
 }
@@ -84,10 +76,10 @@ IPTR ArgumentListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP
 	input = (struct ArgumentEntry*)msg->entry;
 
 	if (entry = AllocTaskPooled(sizeof(struct ArgumentEntry)))
-	{			
+	{
 		if (entry->ae_Name = StrNew(input->ae_Name))
-		{			
-			
+		{
+
 			if (entry->ae_Type = StrNew(input->ae_Type))
 			{
 				entry->ae_Register = input->ae_Register;
@@ -129,17 +121,17 @@ IPTR ArgumentListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 {
 	struct ArgumentListData *d = (struct ArgumentListData*)INST_DATA(cl, obj);
 	struct ArgumentEntry *ae = (struct ArgumentEntry*)msg->entry;
-	
-	// The MUIM_List_Display method of the function list returns pointer to a local 
-	// variable which contains the string to be displayed. However, this pointer and the array are invalid 
-	// as soon as the function is left and hence the string might get overwritten by other random data 
+
+	// The MUIM_List_Display method of the function list returns pointer to a local
+	// variable which contains the string to be displayed. However, this pointer and the array are invalid
+	// as soon as the function is left and hence the string might get overwritten by other random data
 	// which eventually are displayed by MUI.
 	#ifdef __amigaos4__
 	static char type_aligned[48];
 	#else
 	char type_aligned[48];
 	#endif
-	
+
 
 	if (!ae)
 	{
@@ -166,9 +158,9 @@ IPTR ArgumentListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 		}
 
 		d->M68kRegBuf[2] = 0x00;
-		
-		FmtNPut(type_aligned, "\33r%s", 48, ae->ae_Type);		
-		
+
+		FmtNPut(type_aligned, "\33r%s", 48, ae->ae_Type);
+
 		msg->array[0] = type_aligned;
 		msg->array[1] = ae->ae_Name;
 		msg->array[2] = d->M68kRegBuf;
@@ -203,17 +195,8 @@ IPTR ArgumentListInsertMethodTable(UNUSED Class *cl, Object *obj, struct MTLP_In
 // ArgumentListDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-LONG ArgumentListDispatcher(Class *cl, Object *obj,	Msg msg)
-#else
-LONG ArgumentListDispatcher(void)
+DISPATCHER(ArgumentListDispatcher)
 {
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-{
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                  return ArgumentListNew(cl, obj, (struct opSet*)msg);

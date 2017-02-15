@@ -17,13 +17,7 @@
 
 struct MUI_CustomClass *FunctionEditorClass;
 
-
-#ifdef __amigaos4__
-IPTR FunctionEditorDispatcher(Class *cl,Object * obj,	Msg msg); 
-#else
-IPTR FunctionEditorDispatcher(void);
-const struct EmulLibEntry FunctionEditorGate = {TRAP_LIB, 0, (void(*)(void))FunctionEditorDispatcher};
-#endif
+DISPATCHERPROTO(FunctionEditorDispatcher);
 
 CONST_STRPTR TypicalTypes[] = {
 	"VOID",
@@ -74,11 +68,7 @@ struct MUI_CustomClass *CreateFunctionEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct FunctionEditorData), (APTR)&FunctionEditorDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct FunctionEditorData), (APTR)&FunctionEditorGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct FunctionEditorData), ENTRY(FunctionEditorDispatcher));
 	FunctionEditorClass = cl;
 	return cl;
 }
@@ -630,17 +620,8 @@ IPTR FunctionEditorGetArgumentRegister(Class *cl, Object *obj, struct FEDP_GetAr
 // FunctionEditorDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-IPTR FunctionEditorDispatcher(Class *cl,Object *obj,Msg msg)
-#else
-IPTR FunctionEditorDispatcher(void)
+DISPATCHER(FunctionEditorDispatcher)
 {
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-{
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                     return FunctionEditorNew(cl, obj, (struct opSet*)msg);

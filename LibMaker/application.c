@@ -79,12 +79,7 @@ struct ObjData
 };
 
 
-#ifdef __amigaos4__
-LONG ApplicationDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-LONG ApplicationDispatcher(void);
-const struct EmulLibEntry ApplicationGate = {TRAP_LIB, 0, (void(*)(void))ApplicationDispatcher};
-#endif
+DISPATCHERPROTO(ApplicationDispatcher);
 
 #define MENUITEM_ABOUT      1
 #define MENUITEM_QUIT       2
@@ -105,11 +100,7 @@ struct MUI_CustomClass *CreateApplicationClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct ObjData), (APTR)&ApplicationDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct ObjData), (APTR)&ApplicationGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct ObjData), ENTRY(ApplicationDispatcher));
 	ApplicationClass = cl;
 	return cl;
 }
@@ -1907,17 +1898,8 @@ IPTR ApplicationCloseClassEditor(Class *cl, Object *obj, struct APPP_CloseClassE
 // ApplicationDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-LONG ApplicationDispatcher(Class *cl,Object * obj,	Msg msg)
+DISPATCHER(ApplicationDispatcher)
 {
-#else
-LONG ApplicationDispatcher(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                    return ApplicationNew(cl, obj, (struct opSet*)msg);

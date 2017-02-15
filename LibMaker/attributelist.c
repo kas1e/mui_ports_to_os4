@@ -13,12 +13,7 @@
 
 struct MUI_CustomClass *AttributeListClass;
 
-#ifdef __amigaos4__
-LONG AttributeListDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-LONG AttributeListDispatcher(void);
-const struct EmulLibEntry AttributeListGate = {TRAP_LIB, 0, (void(*)(void))AttributeListDispatcher};
-#endif
+DISPATCHERPROTO(AttributeListDispatcher);
 
 struct AttributeListData
 {
@@ -35,11 +30,7 @@ struct MUI_CustomClass *CreateAttributeListClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct AttributeListData), (APTR)&AttributeListDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct AttributeListData), (APTR)&AttributeListGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct AttributeListData), ENTRY(AttributeListDispatcher));
 	AttributeListClass = cl;
 	return cl;
 }
@@ -154,15 +145,7 @@ IPTR AttributeListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_
 // AttributeListDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-LONG AttributeListDispatcher(Class *cl,Object * obj,	Msg msg)
-#else
-LONG AttributeListDispatcher(void)
-{
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
+DISPATCHER(AttributeListDispatcher)
 {
 	switch (msg->MethodID)
 	{

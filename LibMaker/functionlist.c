@@ -13,13 +13,7 @@
 
 struct MUI_CustomClass *FunctionListClass;
 
-#ifdef __amigaos4__
-LONG FunctionListDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-LONG FunctionListDispatcher(void);
-const struct EmulLibEntry FunctionListGate = {TRAP_LIB, 0, (void(*)(void))FunctionListDispatcher};
-#endif
-
+DISPATCHERPROTO(FunctionListDispatcher);
 
 struct FunctionListData
 {
@@ -36,11 +30,8 @@ struct FunctionListData
 struct MUI_CustomClass *CreateFunctionListClass(void)
 {
 	struct MUI_CustomClass *cl;
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct FunctionListData), (APTR)&FunctionListDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct FunctionListData), (APTR)&FunctionListGate);
-	#endif
+
+	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct FunctionListData), ENTRY(FunctionListDispatcher));
 	FunctionListClass = cl;
 	return cl;
 }
@@ -310,10 +301,10 @@ IPTR FunctionListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 {
 	struct FunctionListData *d = INST_DATA(cl, obj);
 	struct FunctionEntry *fe = (struct FunctionEntry*)msg->entry;
-	
-	// The MUIM_List_Display method of the function list returns pointer to a local 
-	// variable which contains the string to be displayed. However, this pointer and the array are invalid 
-	// as soon as the function is left and hence the string might get overwritten by other random data 
+
+	// The MUIM_List_Display method of the function list returns pointer to a local
+	// variable which contains the string to be displayed. However, this pointer and the array are invalid
+	// as soon as the function is left and hence the string might get overwritten by other random data
 	// which eventually are displayed by MUI.
 	#ifdef __amigaos4__
 	static char type_aligned[48];
@@ -344,17 +335,8 @@ IPTR FunctionListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 // FunctionListDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-LONG FunctionListDispatcher(Class *cl,Object * obj,	Msg msg)
-#else
-LONG FunctionListDispatcher(void)
+DISPATCHER(FunctionListDispatcher)
 {
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-{
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                  return FunctionListNew(cl, obj, (struct opSet*)msg);

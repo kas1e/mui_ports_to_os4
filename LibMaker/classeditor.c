@@ -23,12 +23,7 @@
 
 struct MUI_CustomClass *ClassEditorClass;
 
-#ifdef __amigaos4__
-IPTR ClassEditorDispatcher(Class *cl,Object * obj,	Msg msg);
-#else
-IPTR ClassEditorDispatcher(void);
-const struct EmulLibEntry ClassEditorGate = {TRAP_LIB, 0, (void(*)(void))ClassEditorDispatcher};
-#endif
+DISPATCHERPROTO(ClassEditorDispatcher);
 
 struct CEObjs
 {
@@ -63,11 +58,7 @@ struct MUI_CustomClass *CreateClassEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	#ifdef __amigaos4__
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct ClassEditorData), (APTR)&ClassEditorDispatcher);
-	#else
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct ClassEditorData), (APTR)&ClassEditorGate);
-	#endif
+	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct ClassEditorData), ENTRY(ClassEditorDispatcher));
 	ClassEditorClass = cl;
 	return cl;
 }
@@ -233,7 +224,7 @@ Object* CreateAttrPropertiesGroup(struct CEObjs *objs)
 	TAG_END);
 
 	return obj;
-} 
+}
 
 
 //==============================================================================================
@@ -557,7 +548,7 @@ IPTR ClassEditorUpdateAttrFromGadgets(Class *cl, Object *obj)
 			if (XGet(d->Objects.ChkAttrUsageInit, MUIA_Selected)) ae->ae_Usage |= ATTR_USAGE_INIT;
 			if (XGet(d->Objects.ChkAttrUsageSet, MUIA_Selected)) ae->ae_Usage |= ATTR_USAGE_SET;
 			if (XGet(d->Objects.ChkAttrUsageGet, MUIA_Selected)) ae->ae_Usage |= ATTR_USAGE_GET;
-			DoMethod(d->Objects.LstAttributes, MUIM_List_Redraw, MUIV_List_Redraw_Entry, (IPTR)ae); 
+			DoMethod(d->Objects.LstAttributes, MUIM_List_Redraw, MUIV_List_Redraw_Entry, (IPTR)ae);
 		}
 	}
 
@@ -880,7 +871,7 @@ IPTR ClassEditorOpenMethodEditor(Class *cl, Object *obj, struct CEDP_OpenMethodE
 			DoMethod(d->Objects.LstMethods, MUIM_List_InsertSingle, (IPTR)&me2, MUIV_List_Insert_Bottom);
 			XSet(d->Objects.LstMethods, MUIA_List_Active, MUIV_List_Active_Bottom);
 		}
- 
+
 		DoMethod(d->Objects.LstMethods, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, (IPTR)&me);
 		XSet(_app(obj), MUIA_Application_Sleep, TRUE);
 		DoMethod(d->Objects.WndMethodEditor, MEDM_Setup, (IPTR)XGet(_app(obj), APPA_ProjectName), (IPTR)me, (IPTR)obj);
@@ -930,17 +921,8 @@ IPTR ClassEditorCloseMethodEditor(Class *cl, Object *obj, struct CEDP_CloseMetho
 // ClassEditorDispatcher()
 //==============================================================================================
 
-#ifdef __amigaos4__
-IPTR ClassEditorDispatcher(Class *cl,Object * obj,	Msg msg)
-#else
-IPTR ClassEditorDispatcher(void)
+DISPATCHER(ClassEditorDispatcher)
 {
-	Class *cl = (Class*)REG_A0;
-	Object *obj = (Object*)REG_A2;
-	Msg msg = (Msg)REG_A1;
-#endif
-{
-
 	switch (msg->MethodID)
 	{
 		case OM_NEW:                        return ClassEditorNew(cl, obj, (struct opSet*)msg);
