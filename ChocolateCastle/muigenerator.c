@@ -425,7 +425,7 @@ intptr_t MuiGeneratorGenerate(Class *cl, Object *obj, Msg msg)
 			T("MUIC_"); T(s); T(", NULL, ");
 		}
 
-		TC("sizeof(struct %sData), ENTRY(%sDispatcher));\n");
+		TC("sizeof(struct %sData)"); TC(", ENTRY(%sDispatcher));\n");
 		I; TC("%sClass = cl;\n"); I; T("return cl;\n"); IO; T("}\n\n\n");
 		T("///\n");
 
