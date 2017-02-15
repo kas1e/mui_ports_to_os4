@@ -57,7 +57,7 @@ struct GeneratorData
 	STRPTR  ClassName;
 	STRPTR  ClassNameSmall;
 	int     Condition;
-	UBYTE   LineBuf[INPUT_LINE_MAX_LEN];
+	char    LineBuf[INPUT_LINE_MAX_LEN];
 };
 
 
@@ -330,11 +330,11 @@ IPTR GeneratorNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	Object *newobj = NULL;
 
-	if (obj = DoSuperNewM(cl, obj,
+	if ((obj = DoSuperNewM(cl, obj,
 		MUIA_Window_RootObject, create_root(),
 		MUIA_Window_ID, 0x47454E45,
 		MUIA_Window_ScreenTitle, ScreenTitle,
-	TAG_MORE, msg->ops_AttrList))
+	TAG_MORE, msg->ops_AttrList)) != NULL)
 	{
 		struct GeneratorData *d = INST_DATA(cl, obj);
 
@@ -392,22 +392,22 @@ int GeneratorSetup(Class *cl, Object *obj, struct GENP_Setup *msg)
 	GetAttr(MUIA_String_Contents, d->DestDir, (ULONG*)&dest_dir);
 	GetAttr(MUIA_String_Contents, d->ModuleName, (ULONG*)&filename);
 
-	if (lowercase_name = FmtNew(msg->NamePattern, filename))
+	if ((lowercase_name = FmtNew(msg->NamePattern, filename)) != NULL)
 	{
 		BPTR dir_lock;
 
 		strlow(lowercase_name);
 
-		if (dir_lock = Lock((STRPTR)dest_dir, SHARED_LOCK))
+		if ((dir_lock = Lock((STRPTR)dest_dir, SHARED_LOCK)) != (BPTR)NULL)
 		{
 			BPTR olddir;
 
 			olddir = CurrentDir(dir_lock);
-			if (d->FileHandle = Open((STRPTR)lowercase_name, MODE_NEWFILE))
+			if ((d->FileHandle = Open((STRPTR)lowercase_name, MODE_NEWFILE)) != (BPTR)NULL)
 			{
-				if (d->ClassName = FmtNew((STRPTR)"%s", filename))
+				if ((d->ClassName = FmtNew((STRPTR)"%s", filename)) != NULL)
 				{
-					if (d->ClassNameSmall = FmtNew((STRPTR)"%s", filename))
+					if ((d->ClassNameSmall = FmtNew((STRPTR)"%s", filename)) != NULL)
 					{
 						strlow(d->ClassNameSmall);
 						rv = TRUE;
@@ -431,7 +431,7 @@ IPTR GeneratorCleanup(Class *cl, Object *obj, Msg msg)
 
 	msg = msg;
 	if (d->FileHandle) Close(d->FileHandle);
-	d->FileHandle = NULL;
+	d->FileHandle = (BPTR)NULL;
 	FreeVecTaskPooled(d->ClassName);
 	d->ClassName = NULL;
 	FreeVecTaskPooled(d->ClassNameSmall);
@@ -592,11 +592,11 @@ IPTR GeneratorSaveAction(Class *cl, Object *obj, UNUSED Msg msg)
 
 	dirname = (STRPTR)xget(d->DestDir, MUIA_String_Contents);
 
-	if (freq = MUI_AllocAslRequest(ASL_FileRequest, TAG_END))
+	if ((freq = MUI_AllocAslRequest(ASL_FileRequest, TAG_END)) != NULL)
 	{
 		STRPTR filename;
 
-		if (filename = FmtNew((STRPTR)"%s.chc", xget(d->ModuleName, MUIA_String_Contents)))
+		if ((filename = FmtNew((STRPTR)"%s.chc", xget(d->ModuleName, MUIA_String_Contents))) != NULL)
 		{
 			strlow(filename);
 
@@ -619,17 +619,17 @@ IPTR GeneratorSaveAction(Class *cl, Object *obj, UNUSED Msg msg)
 
 				dirname = freq->fr_Drawer;
 
-				if (lock = Lock((STRPTR)dirname, ACCESS_READ))
+				if ((lock = Lock((STRPTR)dirname, ACCESS_READ)) != (BPTR)NULL)
 				{
 					olddir = CurrentDir(lock);
 
-					if (handle = Open(freq->fr_File, MODE_NEWFILE))
+					if ((handle = Open(freq->fr_File, MODE_NEWFILE)) != (BPTR)NULL)
 					{
 						struct GENP_Save genps;
 
 						genps.MethodID = GENM_Save;
 						genps.Handle = handle;
-						success = DoMethodA(obj, &genps);
+						success = DoMethodA(obj, (Msg)&genps);
 						Close(handle);
 					}
 					else MUI_Request(App, obj, 0, "ChocolateCastle", (char*)LS(MSG_ERROR_REQUESTER_OK_BUTTON, "*_OK"),
@@ -665,7 +665,7 @@ IPTR GeneratorLoadAction(Class *cl, Object *obj, Msg msg)
 	cl = cl;
 	msg = msg;
 
-	if (freq = MUI_AllocAslRequest(ASL_FileRequest, TAG_END))
+	if ((freq = MUI_AllocAslRequest(ASL_FileRequest, TAG_END)) != NULL)
 	{
 		if (MUI_AslRequestTags(freq,
 			ASLFR_Window, (IPTR)_window(obj),
@@ -681,25 +681,25 @@ IPTR GeneratorLoadAction(Class *cl, Object *obj, Msg msg)
 		{
 			BPTR lock;
 
-			if (lock = Lock(freq->fr_Drawer, SHARED_LOCK))
+			if ((lock = Lock(freq->fr_Drawer, SHARED_LOCK)) != (BPTR)NULL)
 			{
 				BPTR olddir, handle;
 
 				olddir = CurrentDir(lock);
 
-				if (handle = Open(freq->fr_File, MODE_OLDFILE))
+				if ((handle = Open(freq->fr_File, MODE_OLDFILE)) != (BPTR)NULL)
 				{
 					struct GENP_Load genpl;
 					struct Parser parser;
 
-					if (parser.args = AllocDosObject(DOS_RDARGS, NULL))
+					if ((parser.args = AllocDosObject(DOS_RDARGS, NULL)) != NULL)
 					{
 						parser.line = 1;
 						genpl.MethodID = GENM_Load;
 						genpl.Handle = handle;
 						genpl.Parser = &parser;
 						genpl.LineBuf = d->LineBuf;
-						DoMethodA(obj, &genpl);
+						DoMethodA(obj, (Msg)&genpl);
 						FreeDosObject(DOS_RDARGS, parser.args);
 					}
 					Close(handle);
@@ -802,18 +802,18 @@ IPTR GeneratorMethodHeader(UNUSED Class *cl, Object *obj, struct GENP_MethodHead
 
 	if (xget(d->DocCheck, MUIA_Selected))
 	{
-		UBYTE line[79];
+		char line[79];
 		STRPTR unit_name;
 
 		unit_name = (STRPTR)xget(obj, GENA_UnitName);
 		if (msg->ExtClass) unit_name = (STRPTR)xget(findobj(d->LibGroup, OBJ_LIBG_NAME), MUIA_String_Contents);
 
-		FmtNPut(line, (STRPTR)"/****** %s/%s ***********************************************************************",79, unit_name, msg->FuncName);
+		FmtNPut(line, "/****** %s/%s ***********************************************************************",79, unit_name, msg->FuncName);
 		T(line);
 
 		T("\n* NAME\n");
 
-		FmtNPut(line, (STRPTR)"*   %s (v0) 0x%s\n", 79, msg->MethodName, msg->Identifier);
+		FmtNPut(line, "*   %s (v0) 0x%s\n", 79, msg->MethodName, msg->Identifier);
 		T(line);
 
 		T("*\n* FUNCTION\n*\n*\n* NOTES\n*\n*\n* SEE ALSO\n*\n");
@@ -906,7 +906,7 @@ IPTR GeneratorMakefileSignature(Class *cl, Object *obj)
 ///
 /// GeneratorCreateLibGroup()
 
-static Object* create_lib_group_label(STRPTR label)
+static Object* create_lib_group_label(CONST_STRPTR label)
 {
 	Object *obj;
 
