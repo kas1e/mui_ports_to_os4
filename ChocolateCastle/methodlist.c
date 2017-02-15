@@ -74,15 +74,15 @@ IPTR MethodListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 
 	ine = (struct MethodEntry*)msg->entry;
 
-	if (ent = AllocPooled(msg->pool, sizeof(struct MethodEntry)))
+	if ((ent = AllocPooled(msg->pool, sizeof(struct MethodEntry))) != NULL)
 	{
-		if (ent->Name = AllocVecPooled(msg->pool, strln(ine->Name) + 1))
+		if ((ent->Name = AllocVecPooled(msg->pool, strln(ine->Name) + 1)) != NULL)
 		{
-			if (ent->Structure = AllocVecPooled(msg->pool, strln(ine->Structure) + 1))
+			if ((ent->Structure = AllocVecPooled(msg->pool, strln(ine->Structure) + 1)) != NULL)
 			{
-				if (ent->Function = AllocVecPooled(msg->pool, strln(ine->Function) + 1))
+				if ((ent->Function = AllocVecPooled(msg->pool, strln(ine->Function) + 1)) != NULL)
 				{
-					if (ent->Identifier = AllocVecPooled(msg->pool, strln(ine->Identifier) + 1))
+					if ((ent->Identifier = AllocVecPooled(msg->pool, strln(ine->Identifier) + 1)) != NULL)
 					{
 						StrCopy(ine->Name, ent->Name);
 						StrCopy(ine->Structure, ent->Structure);
@@ -131,17 +131,17 @@ IPTR MethodListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_Lis
 
 	if (!ent)
 	{
-		msg->array[0] = LS(MSG_METHOD_LIST_HEADER_NAME, "\33cMethod Name");
-		msg->array[1] = LS(MSG_METHOD_LIST_HEADER_IDENTIFIER, "\33cIdentifier");
-		msg->array[2] = LS(MSG_METHOD_LIST_HEADER_FUNCTION, "\33cFunction");
-		msg->array[3] = LS(MSG_METHOD_LIST_HEADER_STRUCTURE, "\33cMessage Structure");
+		msg->array[0] = (STRPTR)LS(MSG_METHOD_LIST_HEADER_NAME, "\33cMethod Name");
+		msg->array[1] = (STRPTR)LS(MSG_METHOD_LIST_HEADER_IDENTIFIER, "\33cIdentifier");
+		msg->array[2] = (STRPTR)LS(MSG_METHOD_LIST_HEADER_FUNCTION, "\33cFunction");
+		msg->array[3] = (STRPTR)LS(MSG_METHOD_LIST_HEADER_STRUCTURE, "\33cMessage Structure");
 	}
 	else
 	{
-		msg->array[0] = (STRPTR)ent->Name;
-		msg->array[1] = (STRPTR)ent->Identifier;
-		msg->array[2] = (STRPTR)ent->Function;
-		msg->array[3] = (STRPTR)ent->Structure;
+		msg->array[0] = ent->Name;
+		msg->array[1] = ent->Identifier;
+		msg->array[2] = ent->Function;
+		msg->array[3] = ent->Structure;
 	}
 
 	return 0;
