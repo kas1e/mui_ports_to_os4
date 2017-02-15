@@ -5,6 +5,7 @@ ChocolateCastle - ChangeLog
 2017-02-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: everything builds for AmigaOS3 as well now.
+  * generator.c: free the strings with the correct function.
 
 2017-02-14 Thore Böckelmann <tboeckel@gmx.de>
 
