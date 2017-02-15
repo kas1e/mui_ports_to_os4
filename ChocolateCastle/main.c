@@ -27,16 +27,19 @@ struct Library *UtilityBase;
 struct Library *IntuitionBase;
 struct Library *MUIMasterBase;
 struct Library *LocaleBase;
+struct Library *IconBase;
 
 struct UtilityIFace  	*IUtility = NULL;
 struct IntuitionIFace 	*IIntuition = NULL;
 struct MUIMasterIFace	*IMUIMaster	= NULL;
 struct LocaleIFace   	*ILocale = NULL;
+struct IconIFace        *IIcon = NULL;
 #else
 struct UtilityBase *UtilityBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
 struct LocaleBase *LocaleBase;
+struct Library *IconBase;
 #endif
 
 #ifdef __amigaos4__
@@ -84,34 +87,41 @@ void free_classes(void)
 
 BOOL get_resources(void)
 {
-	if (MPool = CreatePool(MEMF_ANY, 16384, 16384))
+	if ((MPool = CreatePool(MEMF_ANY, 16384, 16384)) != NULL)
 	{
-		if (UtilityBase = OpenLibrary((STRPTR)"utility.library", 39))
+		if ((UtilityBase = (APTR)OpenLibrary((STRPTR)"utility.library", 39)) != NULL)
 		{
 			#if defined(__amigaos4__)
 			IUtility = (struct UtilityIFace *)GetInterface(UtilityBase, "main", 1, NULL);
 			#endif
 
-			if (IntuitionBase = OpenLibrary((STRPTR)"intuition.library", 39))
+			if ((IntuitionBase = (APTR)OpenLibrary((STRPTR)"intuition.library", 39)) != NULL)
 			{
 				#if defined(__amigaos4__)
 				IIntuition = (struct IntuitionIFace *)GetInterface(IntuitionBase, "main", 1, NULL);
 				#endif
 
-				if (MUIMasterBase = OpenLibrary((STRPTR)"muimaster.library", 19))
+				if ((MUIMasterBase = (APTR)OpenLibrary((STRPTR)"muimaster.library", 19)) != NULL)
 				{
 					#if defined(__amigaos4__)
 					IMUIMaster = (struct MUIMasterIFace *)GetInterface(MUIMasterBase, "main", 1, NULL);
 					#endif
 
-					if (LocaleBase = OpenLibrary((STRPTR)"locale.library", 50))
+					if ((LocaleBase = (APTR)OpenLibrary((STRPTR)"locale.library", 50)) != NULL)
 					{
 						#if defined(__amigaos4__)
 						ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL);
 						#endif
 
-						Cat = OpenCatalog(NULL, (STRPTR)"ChocolateCastle.catalog", TAG_END);
-						if (get_classes()) return TRUE;
+						if ((IconBase = (APTR)OpenLibrary((STRPTR)"icon.library", 39)) != NULL)
+						{
+							#if defined(__amigaos4__)
+							IIcon = (struct IconIFace *)GetInterface(IconBase, "main", 1, NULL);
+							#endif
+
+							Cat = OpenCatalog(NULL, (STRPTR)"ChocolateCastle.catalog", TAG_END);
+							if (get_classes()) return TRUE;
+						}
 					}
 				}
 			}
@@ -128,23 +138,27 @@ void free_resources(void)
 	free_classes();
 	CloseCatalog(Cat);
 	#if defined(__amigaos4__)
+	if(IIcon != NULL)
+		DropInterface((struct Interface *)IIcon);
+
 	if(ILocale != NULL)
-		DropInterface(ILocale);
+		DropInterface((struct Interface *)ILocale);
 
 	if(IMUIMaster != NULL)
-		DropInterface(IMUIMaster);
+		DropInterface((struct Interface *)IMUIMaster);
 
 	if(IIntuition != NULL)
-		DropInterface(IIntuition);
+		DropInterface((struct Interface *)IIntuition);
 
 	if(IUtility != NULL)
-		DropInterface(IUtility);
+		DropInterface((struct Interface *)IUtility);
 	#endif
 
-	if (LocaleBase) CloseLibrary(LocaleBase);
-	if (MUIMasterBase) CloseLibrary(MUIMasterBase);
-	if (IntuitionBase) CloseLibrary(IntuitionBase);
-	if (UtilityBase) CloseLibrary(UtilityBase);
+	if (IconBase) CloseLibrary((struct Library *)IconBase);
+	if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
+	if (MUIMasterBase) CloseLibrary((struct Library *)MUIMasterBase);
+	if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
+	if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
 	if (MPool) DeletePool(MPool);
 	return;
 }

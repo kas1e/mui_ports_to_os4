@@ -2,6 +2,10 @@
 ChocolateCastle - ChangeLog
 ---------------------------
 
+2017-02-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: everything builds for AmigaOS3 as well now.
+
 2017-02-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * castleapp.c: added OM_DISPOSE method to dispose the iconification icon
