@@ -3,7 +3,7 @@
 #include "support.h"
 #include "generator.h"
 #include "locale.h"
-#ifndef __amigaos4__
+#if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
 #endif
 #include <libvstring.h>

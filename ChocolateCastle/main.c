@@ -1,6 +1,6 @@
 /* ChocolateCastle */
 #include <proto/exec.h>
-#ifndef __amigaos4__
+#if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
 #endif
 #include <proto/dos.h>
@@ -22,21 +22,22 @@
 #include "logo.h"
 #include "locale.h"
 
+#if defined(__amigaos4__)
+struct Library *UtilityBase;
+struct Library *IntuitionBase;
+struct Library *MUIMasterBase;
+struct Library *LocaleBase;
 
-
-
-struct Library *UtilityBase, *IntuitionBase, *MUIMasterBase, *LocaleBase;
-#ifndef __amigaos4__
-extern struct Library *SysBase, *DOSBase;
-#endif
-
-#ifdef __amigaos4__
 struct UtilityIFace  	*IUtility = NULL;
 struct IntuitionIFace 	*IIntuition = NULL;
 struct MUIMasterIFace	*IMUIMaster	= NULL;
 struct LocaleIFace   	*ILocale = NULL;
+#else
+struct UtilityBase *UtilityBase;
+struct IntuitionBase *IntuitionBase;
+struct Library *MUIMasterBase;
+struct LocaleBase *LocaleBase;
 #endif
-
 
 #ifdef __amigaos4__
 static const char *  __attribute__((used)) stackcookie = "$STACK: 100000";
@@ -86,21 +87,29 @@ BOOL get_resources(void)
 	if (MPool = CreatePool(MEMF_ANY, 16384, 16384))
 	{
 		if (UtilityBase = OpenLibrary((STRPTR)"utility.library", 39))
-		{	
+		{
+			#if defined(__amigaos4__)
 			IUtility = (struct UtilityIFace *)GetInterface(UtilityBase, "main", 1, NULL);
-			
+			#endif
+
 			if (IntuitionBase = OpenLibrary((STRPTR)"intuition.library", 39))
 			{
+				#if defined(__amigaos4__)
 				IIntuition = (struct IntuitionIFace *)GetInterface(IntuitionBase, "main", 1, NULL);
-				
+				#endif
+
 				if (MUIMasterBase = OpenLibrary((STRPTR)"muimaster.library", 19))
 				{
+					#if defined(__amigaos4__)
 					IMUIMaster = (struct MUIMasterIFace *)GetInterface(MUIMasterBase, "main", 1, NULL);
-					
+					#endif
+
 					if (LocaleBase = OpenLibrary((STRPTR)"locale.library", 50))
 					{
-						ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL); 
-						
+						#if defined(__amigaos4__)
+						ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL);
+						#endif
+
 						Cat = OpenCatalog(NULL, (STRPTR)"ChocolateCastle.catalog", TAG_END);
 						if (get_classes()) return TRUE;
 					}
@@ -118,6 +127,20 @@ void free_resources(void)
 {
 	free_classes();
 	CloseCatalog(Cat);
+	#if defined(__amigaos4__)
+	if(ILocale != NULL)
+		DropInterface(ILocale);
+
+	if(IMUIMaster != NULL)
+		DropInterface(IMUIMaster);
+
+	if(IIntuition != NULL)
+		DropInterface(IIntuition);
+
+	if(IUtility != NULL)
+		DropInterface(IUtility);
+	#endif
+
 	if (LocaleBase) CloseLibrary(LocaleBase);
 	if (MUIMasterBase) CloseLibrary(MUIMasterBase);
 	if (IntuitionBase) CloseLibrary(IntuitionBase);
@@ -163,7 +186,7 @@ BOOL build_gui(void)
 						MUIA_Text_PreParse, "\33c",
 						MUIA_InputMode, MUIV_InputMode_RelVerify,
 					TAG_END),
-					
+
 					// no Reggae for os4
 					#ifndef __amigaos4__
 					MUIA_Group_Child, RegBtn = MUI_NewObjectM(MUIC_Text,
@@ -178,7 +201,7 @@ BOOL build_gui(void)
 						MUIA_InputMode, MUIV_InputMode_RelVerify,
 					TAG_END),
 					#endif
-					
+
 					MUIA_Group_Child, MUI_NewObjectM(MUIC_Rectangle,
 					TAG_END),
 				TAG_END),
@@ -204,7 +227,7 @@ void main_loop(void)
 	while (running)
 	{
 		return_id = DoMethod(App, MUIM_Application_NewInput, (intptr_t)&signals);
-		
+
     if (signals)
     {
       signals = Wait (signals | SIGBREAKF_CTRL_C);
@@ -219,7 +242,7 @@ void main_loop(void)
 		}
 	}
 
-	SetAttrs (InWin, MUIA_Window_Open, FALSE, TAG_END);	
+	SetAttrs (InWin, MUIA_Window_Open, FALSE, TAG_END);
     return;
 }
 
@@ -227,7 +250,7 @@ void main_loop(void)
 /// notifications()
 
 void notifications (void)
-{	
+{
 	DoMethod(InWin, MUIM_Notify, MUIA_Window_CloseRequest, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 	DoMethod(MuiBtn, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, CAAM_Generate, PROJECT_TYPE_MUI);
 	DoMethod(RegBtn, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, CAAM_Generate, PROJECT_TYPE_REGGAE);

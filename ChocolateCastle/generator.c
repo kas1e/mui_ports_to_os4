@@ -37,7 +37,7 @@
 #define REMARKS_WARNINGS    0
 #define REMARKS_COMMENTS    1
 
-extern struct Library *IntuitionBase, *MUIMasterBase;
+extern struct Library *MUIMasterBase;
 
 /// GeneratorData
 

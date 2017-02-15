@@ -3,7 +3,6 @@
 
 #include <proto/locale.h>
 
-extern struct Library *LocaleBase;
 extern struct Catalog *Cat;
 
 #define LS(id, txt) GetCatalogStr(Cat, id, (STRPTR)txt)
