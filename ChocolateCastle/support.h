@@ -34,11 +34,7 @@
 
 static inline intptr_t xget(Object *obj, uint32_t attr)
 {
-#ifdef __amigaos4__
-	uint32 v = 0;
-#else
 	uintptr_t v = 0;
-#endif
 
 	GetAttr(attr, obj, &v);
 	return (intptr_t)v;
