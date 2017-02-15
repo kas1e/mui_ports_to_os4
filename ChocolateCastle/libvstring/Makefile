@@ -88,6 +88,8 @@ CHMOD   = protect FLAGS=rwed
 SED     = sed
 CP      = copy
 CC      = gcc
+AR      = ar
+RANLIB  = ranlib
 STRIP   = strip
 OBJDUMP = objdump
 
@@ -195,6 +197,8 @@ ifeq ($(OS), os4)
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS4)
     CC      = ppc-amigaos-gcc
+    AR      = ppc-amigaos-ar
+    RANLIB  = ppc-amigaos-ranlib
     STRIP   = ppc-amigaos-strip
     OBJDUMP = ppc-amigaos-objdump
   endif
@@ -216,6 +220,8 @@ ifeq ($(OS), os3)
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS)
     CC      = m68k-amigaos-gcc
+    AR      = m68k-amigaos-ar
+    RANLIB  = m68k-amigaos-ranlib
     STRIP   = m68k-amigaos-strip
     OBJDUMP = m68k-amigaos-objdump
   endif
@@ -234,6 +240,8 @@ ifeq ($(OS), mos)
   # Compiler/link/strip commands
   ifneq ($(HOST), MorphOS)
     CC      = ppc-morphos-gcc
+    AR      = ppc-morphos-ar
+    RANLIB  = ppc-morphos-ranlib
     STRIP   = ppc-morphos-strip
     OBJDUMP = ppc-morphos-objdump
   endif
@@ -327,7 +335,8 @@ $(OBJDIR)/%.o: %.c
 # for linking the target
 $(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  AR $@"
-	@$(AR) rs $@ $(addprefix $(OBJDIR)/,$(OBJS))
+	@$(AR) rcs $@ $(addprefix $(OBJDIR)/,$(OBJS))
+	@$(RANLIB) $@
 
 .PHONY: clean
 clean:
