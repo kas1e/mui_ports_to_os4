@@ -19,8 +19,6 @@ TODO:
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#define NO_INLINE_STDARG
-
 
 #define is_va_list(ap) ap
 #define null_va_list(ap) void *ap = NULL
@@ -179,11 +177,6 @@ do                                        \
 } while (0)
 
 
-
-
-//		AROS_UFC2NR(void, PutChProc,        		\
-//		AROS_UFCA(UBYTE, (ch), D0),       		\
-//	    AROS_UFCA(APTR , PutChData, A3)); 		\
 
 
 /*

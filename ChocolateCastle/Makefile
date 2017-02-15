@@ -358,7 +358,7 @@ $(OBJDIR)/%.o: %.c
 # for linking the target
 $(TARGET): libvstring/bin_$(OS)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
-	$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
+	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
