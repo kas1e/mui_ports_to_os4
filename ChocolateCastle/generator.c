@@ -417,9 +417,7 @@ int GeneratorSetup(Class *cl, Object *obj, struct GENP_Setup *msg)
 			CurrentDir(olddir);
 			UnLock(dir_lock);
 		}
-		#ifndef __amigaos4__
-		FreeVecPooled(MPool, lowercase_name);
-		#endif
+		FreeVecTaskPooled(lowercase_name);
 	}
 	return rv;
 }
@@ -434,13 +432,9 @@ IPTR GeneratorCleanup(Class *cl, Object *obj, Msg msg)
 	msg = msg;
 	if (d->FileHandle) Close(d->FileHandle);
 	d->FileHandle = NULL;
-	#ifndef __amigaos4__
-	FreeVecPooled(MPool, d->ClassName);
-	#endif
+	FreeVecTaskPooled(d->ClassName);
 	d->ClassName = NULL;
-	#ifndef __amigaos4__
-	FreeVecPooled(MPool, d->ClassNameSmall);
-	#endif
+	FreeVecTaskPooled(d->ClassNameSmall);
 	d->ClassNameSmall = NULL;
 
 	return 0;
@@ -1077,6 +1071,7 @@ IPTR GeneratorLibraryC(Class *cl, Object *obj, struct GENP_LibraryC *msg)
 		T("#include <proto/multimedia.h>\n\n");
 		T("#include <exec/resident.h>\n");
 		T("#include <exec/libraries.h>\n\n");
+		T("#include <SDI_hook.h>\n\n");
 //		  T("#include \"library.h\"\n");
 		T("#include \"lib_version.h\"\n");
 		if (msg->ProjectType == PROJECT_TYPE_REGGAE) TCS("#include \"%s.h\"\n");
