@@ -77,7 +77,7 @@ void error(STRPTR msg, ...);
 void generate_emullibentry(Object *obj);
 void generate_dispatcher(Object *obj, Object *method_list);
 void wait_loop(void);
-Object *labelled_checkmark(STRPTR label, IPTR id);
+Object *labelled_checkmark(CONST_STRPTR label, IPTR id);
 
 #define MAXPARAMS 8
 #define MUIV_Application_ReturnID_RemGen   0x6EDA9938

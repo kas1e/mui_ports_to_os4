@@ -125,7 +125,7 @@ void wait_loop(void)
 ///
 /// labelled_checkmark
 
-Object *labelled_checkmark(STRPTR label, IPTR id)
+Object *labelled_checkmark(CONST_STRPTR label, IPTR id)
 {
 	Object *o;
 
