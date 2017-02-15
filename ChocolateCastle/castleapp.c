@@ -7,10 +7,7 @@
 #include <proto/utility.h>
 #include <clib/alib_protos.h>
 #include <proto/muimaster.h>
-
-#ifdef __amigaos4__
 #include <proto/icon.h>
-#endif
 
 #include "support.h"
 #include "castleapp.h"
@@ -23,9 +20,7 @@
 
 struct MUI_CustomClass *CastleAppClass;
 
-#ifdef __amigaos4__
 struct DiskObject *disk_object = NULL;
-#endif
 
 
 DISPATCHERPROTO(CastleAppDispatcher);
@@ -50,9 +45,7 @@ intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	Object *newobj = NULL;
 
-#ifdef __amigaos4__
 	disk_object = GetDiskObject("PROGDIR:ChocolateCastle");
-#endif
 
 	obj = DoSuperNewM(cl, obj,
 		MUIA_Application_Author,        "Grzegorz Kraszewski",
@@ -61,9 +54,7 @@ intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 		MUIA_Application_Description,   LS(MSG_APPLICATION_DESCRIPTION, "Code template generator"),
 		MUIA_Application_Title,         "ChocolateCastle",
 		MUIA_Application_Version,       "$VER: ChocolateCastle " CHC_VERSION " (" CHC_DATE ")",
-#ifdef __amigaos4__
 		MUIA_Application_DiskObject,    disk_object,
-#endif
 	TAG_MORE, (ULONG)msg->ops_AttrList);
 
 	if (obj)
@@ -79,10 +70,8 @@ intptr_t CastleAppDispose(Class *cl, Object *obj, Msg msg)
 {
 	intptr_t rc = DoSuperMethodA(cl, obj, msg);
 
-#ifdef __amigaos4__
 	// dispose the icon after the application definitely ceased to exist
 	if (disk_object) FreeDiskObject(disk_object);
-#endif
 
 	return rc;
 }
