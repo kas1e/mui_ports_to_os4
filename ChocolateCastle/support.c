@@ -71,15 +71,7 @@ void generate_dispatcher(Object *obj, Object *method_list)
 	ULONG method_number;
 
 	TC("/// %sDispatcher()\n\n");
-	#ifdef __amigaos4__
-	TC("IPTR %sDispatcher(Class *cl,Object * obj,Msg msg)\n{\n");
-	#else
-	TC("IPTR %sDispatcher(void)\n{\n");
-	II; I; T("Class *cl = (Class*)REG_A0;\n");
-	I; T("Object *obj = (Object*)REG_A2;\n");
-	I; T("Msg msg = (Msg)REG_A1;\n\n");
-	IO;
-	#endif
+	TC("DISPATCHER(%sDispatcher)\n{\n");
 
 	II; I; T("switch (msg->MethodID)\n");
 	I; T("{\n"); II;

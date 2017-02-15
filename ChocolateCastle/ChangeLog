@@ -6,6 +6,7 @@ ChocolateCastle - ChangeLog
 
   * misc: everything builds for AmigaOS3 as well now.
   * generator.c: free the strings with the correct function.
+  * support.c: use the SDI macros for the generated dispatcher function.
 
 2017-02-14 Thore Böckelmann <tboeckel@gmx.de>
 
