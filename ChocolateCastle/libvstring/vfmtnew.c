@@ -17,7 +17,7 @@ STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 
 	VNewRawDoFmt(fmt, (APTR(*)(APTR, UBYTE))RAWFMTFUNC_COUNT, (STRPTR)&l, args);
 
-	if (s = AllocVecTaskPooled(l + 1))
+	if ((s = AllocVecTaskPooled(l + 1)) != NULL)
 	{
 		VNewRawDoFmt(fmt, RAWFMTFUNC_STRING, s, copy);
 	}

@@ -5,7 +5,7 @@
 
 STRPTR StrCopy(CONST_STRPTR s, STRPTR d)
 {
-	while (*d++ = *s++);
+	while ((*d++ = *s++) != '\0');
 
 	return (--d);
 }
