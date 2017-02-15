@@ -44,15 +44,15 @@ TODO:
 #endif
 
 
-#ifndef __typedef_VOID_FUNC
-#define __typedef_VOID_FUNC
-typedef void (*VOID_FUNC)(void);
+#ifndef __typedef_FMT_FUNC
+#define __typedef_FMT_FUNC
+typedef APTR (*FMT_FUNC)(APTR, UBYTE);
 #endif
 
 
-#define RAWFMTFUNC_STRING (VOID_FUNC)0 /* Output to string given in PutChData	        */
-#define RAWFMTFUNC_SERIAL (VOID_FUNC)1 /* Output to debug log (usually serial port)     */
-#define RAWFMTFUNC_COUNT  (VOID_FUNC)2 /* Just count characters, PutChData is a pointer */
+#define RAWFMTFUNC_STRING (FMT_FUNC)0 /* Output to string given in PutChData	        */
+#define RAWFMTFUNC_SERIAL (FMT_FUNC)1 /* Output to debug log (usually serial port)     */
+#define RAWFMTFUNC_COUNT  (FMT_FUNC)2 /* Just count characters, PutChData is a pointer */
 
 
 #define AROS_BSTR_ADDR(s)        (((STRPTR)BADDR(s))+1)
@@ -186,7 +186,7 @@ do                                        \
  * In order to get around we use specially formed va_list with NULL value.
  */
 
-APTR InternalRawDoFmt(CONST_STRPTR FormatString, APTR DataStream, VOID_FUNC PutChProc, APTR inPutChData, va_list VaListStream)
+APTR InternalRawDoFmt(CONST_STRPTR FormatString, APTR DataStream, FMT_FUNC PutChProc, APTR inPutChData, va_list VaListStream)
 {
     UBYTE *PutChData = inPutChData;
 
@@ -432,13 +432,13 @@ APTR InternalRawDoFmt(CONST_STRPTR FormatString, APTR DataStream, VOID_FUNC PutC
 
 
 
-STRPTR VNewRawDoFmt(CONST_STRPTR FormatString, VOID_FUNC PutChProc, APTR PutChData, va_list DataStream)
+STRPTR VNewRawDoFmt(CONST_STRPTR FormatString, FMT_FUNC PutChProc, APTR PutChData, va_list DataStream)
 {
     return InternalRawDoFmt(FormatString, NULL, PutChProc, PutChData, DataStream);
 } /* VNewRawDoFmt */
 
 
-STRPTR NewRawDoFmt(CONST_STRPTR FormatString, VOID_FUNC PutChProc, APTR PutChData, ... )
+STRPTR NewRawDoFmt(CONST_STRPTR FormatString, FMT_FUNC PutChProc, APTR PutChData, ... )
 {
     STRPTR retval;
     va_list args;
