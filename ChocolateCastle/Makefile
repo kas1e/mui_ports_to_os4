@@ -369,7 +369,7 @@ dump:
 .PHONY: clean
 clean:
 	-$(RM) $(TARGET)
-	-$(RM) $(OBJS)
+	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS))
 	@$(MAKE) -C libvstring clean
 
 .PHONY: distclean

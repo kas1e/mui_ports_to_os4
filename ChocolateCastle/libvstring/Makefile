@@ -332,7 +332,7 @@ $(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
 .PHONY: clean
 clean:
 	-$(RM) $(TARGET)
-	-$(RM) $(OBJS)
+	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS))
 
 .PHONY: distclean
 distclean: clean
