@@ -22,14 +22,11 @@ typedef void (*VOID_FUNC)(void);
 #endif
 
 
-#ifdef __amigaos4__
+#if !defined(__MORPHOS__)
 #define RAWFMTFUNC_STRING  0
 #define	RAWFMTFUNC_COUNT   2
 STRPTR VNewRawDoFmt(CONST_STRPTR FormatString, VOID_FUNC PutChProc, APTR PutChData, va_list DataStream);
 STRPTR NewRawDoFmt(CONST_STRPTR FormatString, VOID_FUNC PutChProc, APTR PutChData, ... );
-
-
-
 APTR AllocVecTaskPooled(ULONG byteSize);
 void FreeVecTaskPooled(APTR memory);
 #endif

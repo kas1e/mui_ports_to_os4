@@ -3,10 +3,9 @@
 #include "libvstring.h"
 
 #include <proto/exec.h>
-#ifndef __amigaos4__
+#if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
 #endif
-
 
 struct Mx7
 {
@@ -38,7 +37,7 @@ static APTR putchproc(APTR mx, UBYTE chr)
 LONG FmtNPut(STRPTR dest, STRPTR fmt, LONG maxlen, ...)
 {
 	va_list args;
-	
+
 	struct Mx7 mx7;
 
 	if (maxlen == 0) return 0;
@@ -46,12 +45,12 @@ LONG FmtNPut(STRPTR dest, STRPTR fmt, LONG maxlen, ...)
 	mx7.ptr = dest;
 	mx7.ctr = 0;
 	mx7.max = maxlen - 1;
-	
+
 	va_start(args, maxlen);
-	
+
 	VNewRawDoFmt(fmt, putchproc, (STRPTR)&mx7, args);
-	
+
 	va_end(args);
-		
+
 	return mx7.ctr;
 }
