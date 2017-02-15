@@ -643,9 +643,7 @@ IPTR GeneratorSaveAction(Class *cl, Object *obj, UNUSED Msg msg)
 				 (char*)LS(MSG_PROJECT_SAVE_DIRLOCK_ERROR, "Problem with directory \"%s\", DOS error %ld."),
 				 (IPTR)freq->fr_Drawer, IoErr());
 			}
-			#ifndef __amigaos4__
-			FreeVecPooled(MPool, filename);
-			#endif
+			FreeVecTaskPooled(filename);
 		}
 		MUI_FreeAslRequest(freq);
 	}
