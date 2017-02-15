@@ -140,14 +140,9 @@ Object *labelled_checkmark(STRPTR label, IPTR id)
 	o = MUI_NewObjectM(MUIC_Group,
 		MUIA_Group_Horiz, TRUE,
 		MUIA_Group_Child, MUI_NewObjectM(MUIC_Image,
-			#ifdef __amigaos4__
-			// we can't rely on default theme installed, proper background must
 			ImageButtonFrame,
 			MUIA_ShowSelState, FALSE,
 			MUIA_Background, MUII_ButtonBack,
-			#else
-			MUIA_ShowSelState, TRUE,
-			#endif
 			MUIA_Image_Spec, "6:15",
 			MUIA_InputMode, MUIV_InputMode_Toggle,
 			MUIA_CycleChain, TRUE,
