@@ -25,7 +25,7 @@ void FreeVecTaskPooled(APTR memory);
 #define LuaState lua_State
 #define LuaNewState luaL_newstate
 
-typedef const char* (*LuaReader)(LuaState*, APTR, LONG*); 
+typedef const char* (*LuaReader)(LuaState*, APTR, LONG*);
 
 #define LUA_READER_MEMORY   (LuaReader)(-1)
 #define LUA_READER_FILE     (LuaReader)(-2)
@@ -91,8 +91,8 @@ typedef const char* (*LuaReader)(LuaState*, APTR, LONG*);
 
 
 Object* DoSuperNewM(Class *cl, Object *obj, ...);
-Object* MUI_NewObjectM(char *classname, ...);
-Object* NewObjectM(Class *cl, char *classname, ...);
+Object* MUI_NewObjectM(const char *classname, ...);
+Object* NewObjectM(Class *cl, const char *classname, ...);
 ULONG XGet(Object *obj, ULONG attr);
 ULONG HexStrToULong(CONST_STRPTR s);
 struct RDArgs* ParseLine(char *line, char *templ, LONG *params, struct RDArgs *srcargs);

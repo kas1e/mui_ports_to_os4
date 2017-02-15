@@ -13,12 +13,11 @@
 #include <proto/muimaster.h>
 #include <proto/locale.h>
 
-#ifdef __amigaos4__
+#if defined(__MORPHOS__)
+#include <proto/lua.h>
+#else
 #include <lua.h>
 #include <lauxlib.h>
-
-#else
-#include <proto/lua.h>
 #endif
 
 #include <libraries/asl.h>
@@ -144,9 +143,9 @@ LONG LibMakerMakeDir(LuaState *L)
 {
 	CONST_STRPTR path;
 	BPTR dirlock;
-		
+
 	path = LuaCheckString(L, 1);
-	
+
 	dirlock = Lock(path, SHARED_LOCK);
 
 	if (!dirlock)
@@ -163,7 +162,7 @@ LONG LibMakerMakeDir(LuaState *L)
 		#ifdef __amigaos4__
 		lua_error(L);
 		#else
-		LuaErrorF(L, &fault[2]);             // Skipping colon added by Fault(). 
+		LuaErrorF(L, &fault[2]);             // Skipping colon added by Fault().
 		#endif
 	}
 
@@ -192,7 +191,7 @@ static Object* CreateGroup1(struct AppObjects *objs)
 		MUIA_Group_Child, objs->StrLibraryName = MUI_NewObjectM(MUIC_String,
 			MUIA_Frame, MUIV_Frame_String,
 			MUIA_Background, MUII_StringBack,
-			#ifdef __amigaos4__ 
+			#ifdef __amigaos4__
 			MUIA_String_Contents, "test.library", // as without name (i.e. default) lua script fail.
 			#else
 			MUIA_String_Contents, ".library",
@@ -323,7 +322,7 @@ static Object* CreateGroup2(struct AppObjects *objs)
 				MUIA_Background, MUII_ButtonBack,
 				#else
 				MUIA_ShowSelState, TRUE,
-				#endif				
+				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
@@ -335,7 +334,7 @@ static Object* CreateGroup2(struct AppObjects *objs)
 				MUIA_Text_Contents, LS(MSG_ALTIVEC_CHECKMARK_LABEL, "Use AltiVec"),
 			TAG_END),
 		TAG_END),
-		
+
 		MUIA_Group_Child, MUI_NewObjectM(MUIC_Group,
 			MUIA_Group_Horiz, TRUE,
 			MUIA_ShortHelp, LS(MSG_BOOPSI_CHECKMARK_HELP, "Turns the library into an external public BOOPSI class. The class is added"
@@ -365,7 +364,7 @@ static Object* CreateGroup2(struct AppObjects *objs)
 			MUIA_Group_Child, MUI_NewObjectM(MUIC_Rectangle,
 			TAG_END),
 		TAG_END),
-		
+
 		MUIA_Group_Child, MUI_NewObjectM(MUIC_Group,
 			MUIA_Group_Horiz, TRUE,
 			MUIA_ShortHelp, LS(MSG_MUI_CHECKMARK_HELP, "Turns the library into an external public MUI class. Class methods and "
@@ -544,7 +543,7 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				MUIA_Background, MUII_ButtonBack,
 				#else
 				MUIA_ShowSelState, TRUE,
-				#endif				
+				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
@@ -572,7 +571,7 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				MUIA_Background, MUII_ButtonBack,
 				#else
 				MUIA_ShowSelState, TRUE,
-				#endif				
+				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
@@ -640,7 +639,7 @@ static Object* CreateMainWindow(struct AppObjects *objs)
 	obj = MUI_NewObjectM(MUIC_Window,
 		MUIA_Window_ID, MAKE_ID('M','A','I','N'),
 		MUIA_Window_Title, APP_NAME,
-		MUIA_Window_ScreenTitle, APP_NAME " " APP_VER, 
+		MUIA_Window_ScreenTitle, APP_NAME " " APP_VER,
 		MUIA_Window_RootObject, MUI_NewObjectM(MUIC_Group,
 			MUIA_Group_Child, CreateGroup1(objs),
 			MUIA_Group_Child, CreateGroup2(objs),
@@ -782,12 +781,12 @@ struct Hook STPutCharHook = {
 	NULL,
 	NULL
 };
-	
+
 
 #else
-static const struct EmulLibEntry STPutCharGate = { 
-	TRAP_LIB, 
-	0, 
+static const struct EmulLibEntry STPutCharGate = {
+	TRAP_LIB,
+	0,
 	(void(*)(void))STPutChar
 };
 
@@ -1237,7 +1236,7 @@ IPTR ApplicationNotifications(Class *cl, Object *obj)
 
 #define PushStringItem(L, key, val) LuaPushLiteral(L, key); LuaPushString(L, val); LuaSetTable(L, -3)
 #define PushIntegerItem(L, key, val) LuaPushLiteral(L, key); LuaPushInteger(L, val); LuaSetTable(L, -3)
-#define PushBooleanItem(L, key, val) LuaPushLiteral(L, key); LuaPushBoolean(L, val); LuaSetTable(L, -3) 
+#define PushBooleanItem(L, key, val) LuaPushLiteral(L, key); LuaPushBoolean(L, val); LuaSetTable(L, -3)
 
 
 struct LuaLibReg RegFuncs[2] = {
@@ -1265,7 +1264,7 @@ typedef struct LuaFileReaderData
 {
 	BPTR Handle;
     char *Buffer;
-	
+
 };
 
 const char* memory_reader(UNUSED LuaState *s, APTR data, LONG *size)
@@ -1293,7 +1292,7 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 		pool = CreatePool(MEMF_ANY, 16384, 16384);
 
         LONG result = 0;
-		 		 
+
         if (reader == LUA_READER_MEMORY)
         {
                 struct LuaMemoryData *lmd = (struct LuaMemoryData*)data;
@@ -1343,9 +1342,9 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 {
 	struct ObjData *d = INST_DATA(cl, obj);
-	
+
 	LuaState *L;
-	
+
 	LONG load_result;
 	LONG run_result;
 	LONG script_set;
@@ -1363,16 +1362,16 @@ IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 		#endif
 		{
 			#ifdef __amigaos4__
-			// on morphos LuaNewState() contain luaL_openlibs() for init necessary inbuild modules, doing it manually 
+			// on morphos LuaNewState() contain luaL_openlibs() for init necessary inbuild modules, doing it manually
 			luaL_openlibs(L);
 			// equvalent of morphos's LuaRegisterModule()
 			luaL_openlib(L,"libmaker", RegFuncs,0);
 			#else
 			LuaRegisterModule(L, "libmaker", RegFuncs);
 			#endif
-			
+
 			load_result = LuaLoad(L, LUA_READER_FILE, script_path, "@libgen");
-			
+
 			if (load_result == 0)
 			{
 				struct FunctionEntry *fe;
@@ -1381,7 +1380,7 @@ IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 				/* Getting arguments from GUI and pushing them into a Lua table. */
 
 				LuaNewTable(L);
-				
+
 				PushStringItem(L, "scriptdir", d->Objects.Scripts[script_set]);
 				PushStringItem(L, "instdir", (char*)XGet(d->Objects.StrInstDir, MUIA_String_Contents));
 				PushStringItem(L, "incpath", (char*)XGet(d->Objects.StrIncludePath, MUIA_String_Contents));
@@ -2177,7 +2176,7 @@ static void LoadFunctions(Object *app, struct ObjData *d, BPTR file, STRPTR line
 					}
 					else SetIoErr(LDLERR_VALUE_TOO_LONG);
 				}
-				else SetIoErr(LDLERR_SYNTAX_ERROR); 
+				else SetIoErr(LDLERR_SYNTAX_ERROR);
 			}
 			else SetIoErr(0);
 

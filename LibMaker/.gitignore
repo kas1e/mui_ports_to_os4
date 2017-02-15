@@ -1,3 +1,6 @@
 *.a
 *.o
+*.debug
+*.map
 LibMaker
+Makefile.dep

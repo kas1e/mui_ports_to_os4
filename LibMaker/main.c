@@ -29,7 +29,7 @@ extern struct Library *SysBase;
 extern struct Library *DOSBase;
 
 #ifdef __amigaos4__
-struct DiskObject *disk_object = NULL; 
+struct DiskObject *disk_object = NULL;
 #endif
 
 struct Library
@@ -83,15 +83,15 @@ BOOL GetResources(void)
 #ifndef __amigaos4__
 	if (!(LuaBase = OpenLibrary("lua.library", 51))) return FALSE;
 #endif
-	
+
 #ifdef __amigaos4__
 	IIntuition = (struct IntuitionIFace *)GetInterface(IntuitionBase, "main", 1, NULL);
 	IMUIMaster = (struct MUIMasterIFace *)GetInterface(MUIMasterBase, "main", 1, NULL);
 	IUtility = (struct UtilityIFace *)GetInterface(UtilityBase, "main", 1, NULL);
 	ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL);
-#endif	
+#endif
 
-	
+
 	if (!CreateApplicationClass()) return FALSE;
 	if (!CreateFunctionListClass()) return FALSE;
 	if (!CreateFunctionEditorClass()) return FALSE;
@@ -122,7 +122,7 @@ void FreeResources(void)
 	if (FunctionEditorClass) DeleteFunctionEditorClass();
 	if (FunctionListClass) DeleteFunctionListClass();
 	if (ApplicationClass) DeleteApplicationClass();
-#ifndef __amigaos4__	
+#ifndef __amigaos4__
 	if (LuaBase) CloseLibrary(LuaBase);
 #endif
 #ifdef __amigaos4__
@@ -148,7 +148,7 @@ Object *BuildGui(void)
 	char * _ProgramName = "PROGDIR:LibMaker";
 	disk_object = GetDiskObject(_ProgramName);
 	#endif
-	
+
 	application = NewObjectM(ApplicationClass->mcc_Class, 0,
 		MUIA_Application_Author, APP_AUTHOR,
 		MUIA_Application_Base, APP_BASE,
@@ -157,7 +157,7 @@ Object *BuildGui(void)
 		MUIA_Application_Title, APP_NAME,
 		MUIA_Application_UsedClasses, UsedClasses,
 		MUIA_Application_Version, "$VER: " APP_NAME " " APP_VER " (" APP_DATE ")",
-		#ifdef __amigaos4__		
+		#ifdef __amigaos4__
 		MUIA_Application_DiskObject,    disk_object,
 		#endif
 	TAG_END);
@@ -247,7 +247,7 @@ Object* DoSuperNewM(Class *cl, Object *obj, ...)
 // MUI_NewObjectM()
 //==============================================================================================
 
-Object* MUI_NewObjectM(char *classname, ...)
+Object* MUI_NewObjectM(const char *classname, ...)
 {
 	va_list args, args2;
 	LONG argc = 0;
@@ -294,7 +294,7 @@ Object* MUI_NewObjectM(char *classname, ...)
 // NewObjectM()
 //==============================================================================================
 
-Object* NewObjectM(Class *cl, char *classname, ...)
+Object* NewObjectM(Class *cl, const char *classname, ...)
 {
 	va_list args, args2;
 	LONG argc = 0;
