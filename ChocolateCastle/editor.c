@@ -229,7 +229,7 @@ IPTR EditorNew(Class *cl, Object *obj, struct opSet *msg)
 	{
 		struct EditorData *d = INST_DATA(cl, obj);
 
-		if (d->EdWindow = CreateEditWindow(obj))
+		if ((d->EdWindow = CreateEditWindow(obj)) != NULL)
 		{
 			DoMethod(App, OM_ADDMEMBER, (intptr_t)d->EdWindow);
 			EditWindowNotifications(obj, d->EdWindow);
