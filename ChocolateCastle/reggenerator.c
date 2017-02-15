@@ -429,12 +429,12 @@ IPTR RegGeneratorNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	Object *newobj = NULL;
 
-	if (obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg))
+	if ((obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg)) != NULL)
 	{
 		struct RegGeneratorData *d = INST_DATA(cl, obj);
 		Object *my_group;
 
-		if (my_group = create_my_group(obj, d))
+		if ((my_group = create_my_group(obj, d)) != NULL)
 		{
 			Object *parent;
 
@@ -630,7 +630,7 @@ IPTR RegGeneratorSave(Class *cl, Object *obj, struct GENP_Save *msg)
 	struct RegGeneratorData *d = INST_DATA(cl, obj);
 	LONG e;
 
-	if (DoSuperMethodA(cl, obj, msg))
+	if (DoSuperMethodA(cl, obj, (Msg)msg))
 	{
 		LONG external;
 
@@ -676,7 +676,7 @@ IPTR RegGeneratorLoad(Class *cl, Object *obj, struct GENP_Load *msg)
 	{
 		DoMethod(d->MethodList, MUIM_List_Clear);
 
-		if (rv = load_externity(cl, obj, msg))
+		if ((rv = load_externity(cl, obj, msg)) == TRUE)
 		{
 			if ((xget(d->ExtClassCheck, MUIA_Selected) == FALSE) || (rv = load_lib_settings(cl, obj, msg)))
 			{
