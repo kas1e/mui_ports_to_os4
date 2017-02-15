@@ -123,4 +123,9 @@ static inline void newlist(struct MinList *list)
 /*############################################################################*/
 /*############################################################################*/
 
+#if defined(__amigaos3__)
+APTR AllocVecPooled(APTR pool, ULONG size);
+void FreeVecPooled(APTR pool, APTR mem);
+#endif
+
 #endif  /* CHCASTLE_SUPPORT_H */
