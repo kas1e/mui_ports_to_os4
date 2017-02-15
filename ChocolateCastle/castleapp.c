@@ -45,7 +45,7 @@ intptr_t CastleAppNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	Object *newobj = NULL;
 
-	disk_object = GetDiskObject("PROGDIR:ChocolateCastle");
+	disk_object = GetDiskObject((STRPTR)"PROGDIR:ChocolateCastle");
 
 	obj = DoSuperNewM(cl, obj,
 		MUIA_Application_Author,        "Grzegorz Kraszewski",
