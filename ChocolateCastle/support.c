@@ -173,7 +173,7 @@ void syntax_error(Object *obj, struct Parser *p)
 
 /// check_pattern()
 
-BOOL check_pattern(STRPTR line, STRPTR pattern, struct Parser *parser)
+BOOL check_pattern(STRPTR line, CONST_STRPTR pattern, struct Parser *parser)
 {
 	parser->args->RDA_Source.CS_Buffer = line;
 	parser->args->RDA_Source.CS_Length = strln(line);

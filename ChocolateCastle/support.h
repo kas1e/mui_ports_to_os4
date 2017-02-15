@@ -89,7 +89,7 @@ struct Parser
 	int line;
 };
 
-BOOL check_pattern(STRPTR line, STRPTR pattern, struct Parser *parser);
+BOOL check_pattern(STRPTR line, CONST_STRPTR pattern, struct Parser *parser);
 
 void unexpected_eof(Object *obj, struct Parser *p);
 void syntax_error(Object *obj, struct Parser *p);

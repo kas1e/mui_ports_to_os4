@@ -213,15 +213,15 @@ static Object *create_my_group(Object *obj, struct MuiGeneratorData *d)
 
 int load_super_data(Class *cl, Object *obj, struct GENP_Load *msg)
 {
-	UBYTE line[512];
+	char line[512];
 	int result = FALSE;
 	struct MuiGeneratorData *d = INST_DATA(cl, obj);
 
-	if (FGets(msg->Handle, (STRPTR)line, 512))
+	if (FGets(msg->Handle, line, 512))
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(line, (STRPTR)"SUPERTYPE/K/N/A,SUPERNAME/K/A", msg->Parser))
+		if (check_pattern(line, "SUPERTYPE/K/N/A,SUPERNAME/K/A", msg->Parser))
 		{
 			ULONG type = *(ULONG*)msg->Parser->params[0];
 
@@ -255,15 +255,15 @@ int load_super_data(Class *cl, Object *obj, struct GENP_Load *msg)
 
 static BOOL load_method(Class *cl, Object *obj, struct GENP_Load *msg)
 {
-	UBYTE line[512];
+	char line[512];
 	int result = FALSE;
 	struct MuiGeneratorData *d = INST_DATA(cl, obj);
 
-	if (FGets(msg->Handle, (STRPTR)line, 512))
+	if (FGets(msg->Handle, line, 512))
 	{
 		msg->Parser->line++;
 
-		if (check_pattern(line, (STRPTR)"METHOD/K/A,FUNCTION/K/A,STRUCTURE/K/A,ID/K/A,STD/K/N/A", msg->Parser))
+		if (check_pattern(line, "METHOD/K/A,FUNCTION/K/A,STRUCTURE/K/A,ID/K/A,STD/K/N/A", msg->Parser))
 		{
 			struct MethodEntry me;
 
@@ -319,12 +319,12 @@ IPTR MuiGeneratorNew(Class *cl, Object *obj, struct opSet *msg)
 
 	Object *newobj = NULL;
 
-	if (obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg))
+	if ((obj = (Object*)DoSuperMethodA(cl, obj, (Msg)msg)) != NULL)
 	{
 		struct MuiGeneratorData *d = INST_DATA(cl, obj);
 		Object *my_group;
 
-		if (my_group = create_my_group(obj, d))
+		if ((my_group = create_my_group(obj, d)) != NULL)
 		{
 			Object *parent;
 
@@ -518,7 +518,7 @@ IPTR MuiGeneratorSave(Class *cl, Object *obj, struct GENP_Save *msg)
 {
 	struct MuiGeneratorData *d = INST_DATA(cl, obj);
 
-	if (DoSuperMethodA(cl, obj, msg))
+	if (DoSuperMethodA(cl, obj, (Msg)msg))
 	{
 		ULONG supertype, e;
 
