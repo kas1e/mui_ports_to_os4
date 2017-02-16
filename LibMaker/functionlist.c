@@ -112,7 +112,7 @@ static struct FunctionArgument *CloneArguments(struct FunctionArgument *orig, LO
 	LONG i;
 	BOOL success = FALSE;
 
-	if (clone = AllocVecTaskPooled(sizeof(struct FunctionArgument) * entries))
+	if ((clone = AllocVecTaskPooled(sizeof(struct FunctionArgument) * entries)) != NULL)
 	{
 		/*-----------------*/
 		/* Clear it first. */
@@ -191,7 +191,7 @@ char* GenerateArgumentString(struct FunctionListData *d, struct FunctionEntry *f
 	{
 		char *newbuf;
 
-		if (newbuf = AllocTaskPooled(bufsize))
+		if ((newbuf = AllocTaskPooled(bufsize)) != NULL)
 		{
 			FreeTaskPooled(d->ArgBuf, d->ArgBufLen);
 			d->ArgBuf = newbuf;
@@ -228,7 +228,7 @@ char* GenerateArgumentString(struct FunctionListData *d, struct FunctionEntry *f
 		return d->ArgBuf;
 	}
 
-	return "";      // no memory for buffer, cannot think about anything smarter...
+	return (char *)"";      // no memory for buffer, cannot think about anything smarter...
 }
 
 
@@ -242,13 +242,13 @@ IPTR FunctionListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP
 
 	input = (struct FunctionEntry*)msg->entry;
 
-	if (entry = AllocTaskPooled(sizeof(struct FunctionEntry)))
+	if ((entry = AllocTaskPooled(sizeof(struct FunctionEntry))) != NULL)
 	{
 		entry->fe_ArgCount = input->fe_ArgCount;
 
-		if (entry->fe_Name = StrNew(input->fe_Name))
+		if ((entry->fe_Name = StrNew(input->fe_Name)) != NULL)
 		{
-			if (entry->fe_ReturnType = StrNew(input->fe_ReturnType))
+			if ((entry->fe_ReturnType = StrNew(input->fe_ReturnType)) != NULL)
 			{
 				if (input->fe_ArgCount == 0)
 				{
@@ -256,7 +256,7 @@ IPTR FunctionListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP
 					return (IPTR)entry;
 				}
 
-				if (entry->fe_Arguments = CloneArguments(input->fe_Arguments, input->fe_ArgCount))
+				if ((entry->fe_Arguments = CloneArguments(input->fe_Arguments, input->fe_ArgCount)) != NULL)
 				{
 					return (IPTR)entry;
 				}
