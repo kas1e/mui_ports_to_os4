@@ -13,7 +13,7 @@
 
 struct MUI_CustomClass *MethodListClass;
 
-DISPATCHER(MethodListDispatcher);
+DISPATCHERPROTO(MethodListDispatcher);
 
 struct MethodListData
 {
