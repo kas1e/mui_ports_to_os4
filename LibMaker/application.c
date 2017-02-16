@@ -7,6 +7,7 @@
 #include "classeditor.h"
 #include "attributelist.h"
 #include "libvstring/libvstring.h"
+#include "gitrev.h"
 
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -907,11 +908,7 @@ IPTR ApplicationNew(Class *cl, Object *obj, struct opSet *msg)
 			TAG_END),
 			MUIA_Application_Window, objs.WndAbout = MUI_NewObjectM(MUIC_Aboutbox,
 				MUIA_Aboutbox_Credits, APP_ABOUT,
-				#if defined(__MORPHOS__)
-				MUIA_Aboutbox_Build, __SVNVERSION__,
-				#else
-				MUIA_Aboutbox_Build, APP_VER,
-				#endif
+				MUIA_Aboutbox_Build, GIT_REVSTR,
 			TAG_END),
 			MUIA_Application_Menustrip, CreateAppMenu(),
 		TAG_MORE, msg->ops_AttrList)) != NULL)

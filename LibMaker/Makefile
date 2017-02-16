@@ -156,6 +156,7 @@ LIBDIR   = lib_$(OS)
 VPATH    = $(OBJDIR)
 DEPFILE  = Makefile.dep
 DESTDIR  = MUI:Libs/MUI
+TOOLS    = $(CDUP)/tools
 
 # target definition
 TARGET    = $(BINDIR)/LibMaker
@@ -375,8 +376,8 @@ dump:
 
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET)
-	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS))
+	-$(RM) $(TARGET) $(TARGET).debug
+	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS)) gitrev.h
 	@$(MAKE) -C libvstring clean
 
 .PHONY: distclean
@@ -408,6 +409,17 @@ help:
 	@echo "  make OS=os3|os4|mos|aros-i386|aros-i686|aros-ppc|aros-x86_64"
 	@echo "  make DEBUG= : build $(TARGET) without debugging information"
 	@echo ""
+
+## GITREV TOOL ########################
+
+gitrev.h: $(TOOLS)/gitrev.sh
+	@echo "  GN $@"
+	@$(TOOLS)/gitrev.sh header >$@
+
+## ADDITIONAL DEPENDENCIES ############
+
+$(OBJDIR)/application.o: gitrev.h
+$(OBJDIR)/application.o: CFLAGS += $(BUILDID)
 
 ## LIBVSTRING #########################
 
