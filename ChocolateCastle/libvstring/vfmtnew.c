@@ -7,13 +7,15 @@
 #include <exec/rawfmt.h>
 #endif
 
+#include <SDI_stdarg.h>
+
 STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 {
 	ULONG l = 0;
 	STRPTR s;
-	va_list copy;
+	VA_LIST copy;
 
-	va_copy(copy, args);
+	VA_COPY(copy, args);
 
 	VNewRawDoFmt(fmt, RAWFMTFUNC_COUNT, (STRPTR)&l, args);
 
