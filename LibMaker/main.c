@@ -20,38 +20,33 @@
 #include <workbench/startup.h>
 #include <libraries/asl.h>
 #include <workbench/workbench.h>
-
-#ifdef __amigaos4__
 #include <proto/icon.h>
-#endif
 
-extern struct Library *SysBase;
-extern struct Library *DOSBase;
-
-#ifdef __amigaos4__
 struct DiskObject *disk_object = NULL;
-#endif
 
-struct Library
-	*MUIMasterBase,
-	*IntuitionBase,
-	*UtilityBase,
-#ifdef __amigaos4__
-	*LocaleBase;
-#else
-	*LocaleBase,
-	*LuaBase;
-#endif
+#if defined(__amigaos4__)
+struct Library *UtilityBase;
+struct Library *IntuitionBase;
+struct Library *MUIMasterBase;
+struct Library *LocaleBase;
+struct Library *IconBase;
 
-#ifdef __amigaos4__
-struct MUIMasterIFace	*IMUIMaster	= NULL;
 struct UtilityIFace  	*IUtility = NULL;
-struct LocaleIFace   	*ILocale = NULL;
-struct GraphicsIFace 	*IGraphics = NULL;
-struct CyberGfxIFace 	*ICyberGfx = NULL;
 struct IntuitionIFace 	*IIntuition = NULL;
+struct MUIMasterIFace	*IMUIMaster	= NULL;
+struct LocaleIFace   	*ILocale = NULL;
+struct IconIFace        *IIcon = NULL;
+#else
+struct UtilityBase *UtilityBase;
+struct IntuitionBase *IntuitionBase;
+struct Library *MUIMasterBase;
+struct LocaleBase *LocaleBase;
+struct Library *IconBase;
 #endif
 
+#if defined(__MORPHOS__)
+struct Library *LuaBase;
+#endif
 
 #ifdef __amigaos4__
 static const char *  __attribute__((used)) stackcookie = "$STACK: 100000";
@@ -76,19 +71,21 @@ CONST_STRPTR IdentifierChars;
 
 BOOL GetResources(void)
 {
-	if (!(IntuitionBase = OpenLibrary("intuition.library", 37))) return FALSE;
-	if (!(MUIMasterBase = OpenLibrary("muimaster.library", 20))) return FALSE;
-	if (!(UtilityBase = OpenLibrary("utility.library", 37))) return FALSE;
-	if (!(LocaleBase = OpenLibrary("locale.library", 37))) return FALSE;
-#ifndef __amigaos4__
-	if (!(LuaBase = OpenLibrary("lua.library", 51))) return FALSE;
+	if (!(IntuitionBase = (APTR)OpenLibrary("intuition.library", 37))) return FALSE;
+	if (!(MUIMasterBase = (APTR)OpenLibrary("muimaster.library", 20))) return FALSE;
+	if (!(UtilityBase = (APTR)OpenLibrary("utility.library", 37))) return FALSE;
+	if (!(LocaleBase = (APTR)OpenLibrary("locale.library", 37))) return FALSE;
+	if (!(IconBase = (APTR)OpenLibrary("locale.library", 37))) return FALSE;
+#if defined(__MORPHOS__)
+	if (!(LuaBase = (APTR)OpenLibrary("lua.library", 51))) return FALSE;
 #endif
 
-#ifdef __amigaos4__
+#if defined(__amigaos4__)
 	IIntuition = (struct IntuitionIFace *)GetInterface(IntuitionBase, "main", 1, NULL);
 	IMUIMaster = (struct MUIMasterIFace *)GetInterface(MUIMasterBase, "main", 1, NULL);
 	IUtility = (struct UtilityIFace *)GetInterface(UtilityBase, "main", 1, NULL);
 	ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL);
+	IIcon = (struct IconIFace *)GetInterface(IconBase, "main", 1, NULL);
 #endif
 
 
@@ -101,7 +98,7 @@ BOOL GetResources(void)
 	if (!CreateMethodListClass()) return FALSE;
 	if (!CreateMethodEditorClass()) return FALSE;
 	Loc = OpenLocale(NULL);
-	Cat = OpenCatalog(Loc, APP_NAME ".catalog", TAG_END);
+	Cat = OpenCatalog(Loc, (STRPTR)(APP_NAME ".catalog"), TAG_END);
 	return TRUE;
 }
 
@@ -122,16 +119,33 @@ void FreeResources(void)
 	if (FunctionEditorClass) DeleteFunctionEditorClass();
 	if (FunctionListClass) DeleteFunctionListClass();
 	if (ApplicationClass) DeleteApplicationClass();
-#ifndef __amigaos4__
+	if (disk_object) FreeDiskObject(disk_object);
+
+	#if defined(__amigaos4__)
+	if(IIcon != NULL)
+		DropInterface((struct Interface *)IIcon);
+
+	if(ILocale != NULL)
+		DropInterface((struct Interface *)ILocale);
+
+	if(IMUIMaster != NULL)
+		DropInterface((struct Interface *)IMUIMaster);
+
+	if(IIntuition != NULL)
+		DropInterface((struct Interface *)IIntuition);
+
+	if(IUtility != NULL)
+		DropInterface((struct Interface *)IUtility);
+	#endif
+
+#if defined(__MORPHOS__)
 	if (LuaBase) CloseLibrary(LuaBase);
 #endif
-#ifdef __amigaos4__
-	if (disk_object) FreeDiskObject(disk_object);
-#endif
-	if (LocaleBase) CloseLibrary(LocaleBase);
-	if (UtilityBase) CloseLibrary(UtilityBase);
-	if (MUIMasterBase) CloseLibrary(MUIMasterBase);
-	if (IntuitionBase) CloseLibrary(IntuitionBase);
+	if (IconBase) CloseLibrary((struct Library *)IconBase);
+	if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
+	if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
+	if (MUIMasterBase) CloseLibrary((struct Library *)MUIMasterBase);
+	if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
 	return;
 }
 
@@ -144,22 +158,17 @@ Object *BuildGui(void)
 {
 	Object *application;
 
-	#ifdef __amigaos4__
-	char * _ProgramName = "PROGDIR:LibMaker";
-	disk_object = GetDiskObject(_ProgramName);
-	#endif
+	disk_object = GetDiskObject((STRPTR)"PROGDIR:LibMaker");
 
 	application = NewObjectM(ApplicationClass->mcc_Class, 0,
 		MUIA_Application_Author, APP_AUTHOR,
 		MUIA_Application_Base, APP_BASE,
 		MUIA_Application_Copyright, "(c) " APP_CYEARS " " APP_AUTHOR,
-		MUIA_Application_Description, LS(MSG_APPLICATION_DESCRIPTION, APP_DESC),
+		MUIA_Application_Description, LS(MSG_APPLICATION_DESCRIPTION, (STRPTR)APP_DESC),
 		MUIA_Application_Title, APP_NAME,
 		MUIA_Application_UsedClasses, UsedClasses,
 		MUIA_Application_Version, "$VER: " APP_NAME " " APP_VER " (" APP_DATE ")",
-		#ifdef __amigaos4__
 		MUIA_Application_DiskObject,    disk_object,
-		#endif
 	TAG_END);
 
 	return application;
@@ -183,7 +192,7 @@ ULONG Main(UNUSED struct WBStartup *wbmessage)
 	{
 		InitStrings();
 
-		if (application = BuildGui())
+		if ((application = BuildGui()) != NULL)
 		{
 			DoMethod(application, APPM_Notifications);
 			DoMethod(application, APPM_MainLoop);

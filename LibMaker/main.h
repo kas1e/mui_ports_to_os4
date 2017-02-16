@@ -1,19 +1,20 @@
-typedef char* STRPTR;
-typedef const char* CONST_STRPTR;
-#define STRPTR_TYPEDEF
+#ifndef MAIN_H
+#define MAIN_H 1
 
+#include <exec/types.h>
 #include <proto/intuition.h>
 #include <dos/dos.h>
 
-#ifdef __amigaos4__
+#include <SDI_compiler.h>
+#include <SDI_hook.h>
+
+#if !defined(__MORPHOS__)
 
 #include <stdarg.h>
 #include <strings.h>
 #include <lua.h>
 
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
-
-typedef unsigned long IPTR;
 
 #define AllocTaskPooled(size) AllocMem(size, MEMF_ANY)
 #define FreeTaskPooled(mem, size) FreeMem(mem, size)
@@ -65,7 +66,6 @@ typedef const char* (*LuaReader)(LuaState*, APTR, LONG*);
 
 #define FINDOBJ(parent, id) (Object*)DoMethod(parent, MUIM_FindUData, id)
 #define UNUSED __attribute__((unused))
-#define MAKE_ID(a, b, c, d) (((a) << 24) | ((b) << 16) | ((c) << 8) | (d))
 #define XSet(obj, attr, val) SetAttrs(obj, attr, (IPTR)val, TAG_END)
 #define XNSet(obj, attr, val) DoMethod(obj, MUIM_NoNotifySet, attr, (IPTR)val)
 
@@ -98,15 +98,6 @@ ULONG HexStrToULong(CONST_STRPTR s);
 struct RDArgs* ParseLine(char *line, char *templ, LONG *params, struct RDArgs *srcargs);
 BOOL ReadLine(BPTR file, char *buffer);
 
-
-extern struct Library
-	*SysBase,
-	*DOSBase,
-	*IntuitionBase,
-	*MUIMasterBase,
-	*UtilityBase,
-	*LocaleBase,
-	*LuaBase;
 
 extern CONST_STRPTR IdentifierChars;
 extern CONST_STRPTR TypeChars;
@@ -232,3 +223,5 @@ extern struct Catalog *Cat;
 #define MSG_FUNCEDITOR_M68KREG_LABEL                 108
 #define MSG_ARGLIST_HEADER_REGISTER                  109
 #define MSG_FUNCEDITOR_M68KREG_HELP                  110
+
+#endif /* MAIN_H */
