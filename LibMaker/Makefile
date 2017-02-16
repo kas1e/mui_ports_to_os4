@@ -164,10 +164,10 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
 OPTFLAGS = -O3 -fomit-frame-pointer
 DEBUG    = -DDEBUG -O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -Ilibvstring -I../include $(CPU) $(WARN) $(OPTFLAGS) \
+CFLAGS   = -I. -Ilibvstring -I../include -Ilua-5.1.5/src $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/bin_$(OS) -lvstring
+LDLIBS   = -Llibvstring/bin_$(OS) -lvstring -Llib_$(OS) -llua
 
 ###########################################################################
 # object files definition
@@ -354,7 +354,7 @@ $(OBJDIR)/%.o: %.c
 	@$(CC) $(CFLAGS) $< -o $@
 
 # for linking the target
-$(TARGET): libvstring/bin_$(OS)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): libvstring/bin_$(OS)/libvstring.a lib_$(OS)/liblua.a $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -404,6 +404,12 @@ help:
 
 libvstring/bin_$(OS)/libvstring.a:
 	@$(MAKE) -C libvstring
+
+## LIBLUA #############################
+
+lib_$(OS)/liblua.a:
+	@$(MAKE) -C lua-5.1.5/src CC=$(CC) AR="$(AR) rcs" RANLIB=$(RANLIB) clean generic
+	@cp lua-5.1.5/src/liblua.a $@
 
 ## DEPENDENCY GENERATION ##############
 
