@@ -13,6 +13,7 @@
 #include <stdarg.h>
 #include <strings.h>
 #include <lua.h>
+#include <lualib.h>
 
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 
@@ -95,7 +96,7 @@ Object* MUI_NewObjectM(const char *classname, ...);
 Object* NewObjectM(Class *cl, const char *classname, ...);
 ULONG XGet(Object *obj, ULONG attr);
 ULONG HexStrToULong(CONST_STRPTR s);
-struct RDArgs* ParseLine(char *line, char *templ, LONG *params, struct RDArgs *srcargs);
+struct RDArgs* ParseLine(char *line, const char *templ, LONG *params, struct RDArgs *srcargs);
 BOOL ReadLine(BPTR file, char *buffer);
 
 
@@ -108,7 +109,7 @@ extern CONST_STRPTR HexChars;
 extern struct Locale *Loc;
 extern struct Catalog *Cat;
 
-#define LS(id, str) GetCatalogStr(Cat, id, str)
+#define LS(id, str) GetCatalogStr(Cat, id, (STRPTR)str)
 
 #define MSG_APPLICATION_DESCRIPTION                    0
 #define MSG_MENUITEM_ABOUT                             1

@@ -164,7 +164,7 @@ Object *BuildGui(void)
 		MUIA_Application_Author, APP_AUTHOR,
 		MUIA_Application_Base, APP_BASE,
 		MUIA_Application_Copyright, "(c) " APP_CYEARS " " APP_AUTHOR,
-		MUIA_Application_Description, LS(MSG_APPLICATION_DESCRIPTION, (STRPTR)APP_DESC),
+		MUIA_Application_Description, LS(MSG_APPLICATION_DESCRIPTION, APP_DESC),
 		MUIA_Application_Title, APP_NAME,
 		MUIA_Application_UsedClasses, UsedClasses,
 		MUIA_Application_Version, "$VER: " APP_NAME " " APP_VER " (" APP_DATE ")",
@@ -406,9 +406,9 @@ ULONG HexStrToULong(CONST_STRPTR s)
    dos.library/FreeArgs().
 */
 
-struct RDArgs* ParseLine(char *line, char *templ, LONG *params, struct RDArgs *srcargs)
+struct RDArgs* ParseLine(char *line, const char *templ, LONG *params, struct RDArgs *srcargs)
 {
-	srcargs->RDA_Source.CS_Buffer = (UBYTE*)line;
+	srcargs->RDA_Source.CS_Buffer = line;
 	srcargs->RDA_Source.CS_Length = StrLen(line);
 	srcargs->RDA_Source.CS_CurChr = 0;
 	srcargs->RDA_DAList = 0;
