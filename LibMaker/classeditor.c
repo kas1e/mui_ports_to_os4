@@ -15,9 +15,6 @@
 #include <proto/muimaster.h>
 #include <proto/locale.h>
 #include <proto/utility.h>
-#ifndef __amigaos4__
-#include <proto/lua.h>
-#endif
 #include <clib/alib_protos.h>
 
 
