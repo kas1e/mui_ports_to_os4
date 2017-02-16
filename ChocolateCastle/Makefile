@@ -167,7 +167,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/bin_$(OS) -lvstring
+LDLIBS   = -Llibvstring/$(BINDIR) -lvstring
 
 ###########################################################################
 # object files definition
@@ -356,7 +356,7 @@ $(OBJDIR)/%.o: %.c
 	@$(CC) $(CFLAGS) $< -o $@
 
 # for linking the target
-$(TARGET): libvstring/bin_$(OS)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): libvstring/$(BINDIR)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -404,8 +404,8 @@ help:
 
 ## LIBVSTRING #########################
 
-libvstring/bin_$(OS)/libvstring.a:
-	@$(MAKE) -C libvstring
+libvstring/$(BINDIR)/libvstring.a:
+	@$(MAKE) -C libvstring OS=$(OS)
 
 ## DEPENDENCY GENERATION ##############
 
