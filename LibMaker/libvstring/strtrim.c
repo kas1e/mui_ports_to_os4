@@ -10,7 +10,7 @@ void StrTrim(STRPTR s, CONST_STRPTR array)
 
 	/* left trim phase */
 
-	while (a = *r)
+	while ((a = *r) != '\0')
 	{
 		if ((!lead) || (!StrChr(a, array)))
 		{

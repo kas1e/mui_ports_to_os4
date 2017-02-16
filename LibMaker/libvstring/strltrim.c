@@ -8,7 +8,7 @@ void StrLTrim(STRPTR s, CONST_STRPTR array)
 	char a;
 	BOOL lead = TRUE;
 
-	while (a = *s)
+	while ((a = *s) != '\0')
 	{
 		if ((!lead) || (!StrChr(a, array)))
 		{

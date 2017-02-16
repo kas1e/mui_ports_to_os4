@@ -183,6 +183,13 @@ OBJS = fmtlen.o \
        strcopy.o  \
        strlen.o  \
        strnew.o  \
+       strreplace.o \
+       strchr.o \
+       strequ.o \
+       strltrim.o \
+       strrtrim.o \
+       strtrim.o \
+       strnequ.o \
        vfmtnew.o  \
        strncopy.o  \
        fmtnput.o
