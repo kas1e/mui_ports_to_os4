@@ -4,12 +4,15 @@
 #include <exec/types.h>
 #include <proto/intuition.h>
 #include <dos/dos.h>
+#include <libraries/iffparse.h>
 
 #include <SDI_compiler.h>
 #include <SDI_hook.h>
 
-#if !defined(__MORPHOS__)
-
+#if defined(__MORPHOS__)
+#include <libraries/lua.h>
+#include <proto/lua.h>
+#else
 #include <stdarg.h>
 #include <strings.h>
 #include <lua.h>

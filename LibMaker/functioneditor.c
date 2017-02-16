@@ -392,7 +392,7 @@ IPTR FunctionEditorSet(Class *cl, Object *obj, struct opSet *msg)
 
 	tagptr = msg->ops_AttrList;
 
-	while (tag = NextTagItem(&tagptr))
+	while ((tag = NextTagItem(&tagptr)) != NULL)
 	{
 		switch (tag->ti_Tag)
 		{
