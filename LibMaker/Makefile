@@ -152,6 +152,7 @@ endif
 PREFIX   = $(CDTHIS)
 OBJDIR   = .obj_$(OS)
 BINDIR   = bin_$(OS)
+LIBDIR   = lib_$(OS)
 VPATH    = $(OBJDIR)
 DEPFILE  = Makefile.dep
 DESTDIR  = MUI:Libs/MUI
@@ -167,7 +168,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include -Ilua-5.1.5/src $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/bin_$(OS) -lvstring -Llib_$(OS) -llua -lm
+LDLIBS   = -Llibvstring/$(BINDIR) -lvstring -lm
 
 ###########################################################################
 # object files definition
@@ -204,9 +205,11 @@ ifeq ($(OS), os4)
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               -DNO_PPCINLINE_STDARG -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
-  LDLIBS   += -lauto
+  LDLIBS   += -Llib_$(OS) -llua -lauto
 
   OBJS     += amigaos4_system.o
+
+  LIBLUA   = $(LIBDIR)/liblua.a
 
 else
 ifeq ($(OS), os3)
@@ -225,9 +228,11 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -mcrt=clib2 -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
-  LDLIBS  += -ldebug -lmui
+  LDLIBS  += -Llib_$(OS) -llua -ldebug -lmui
 
   OBJS     += amigaos3_system.o
+
+  LIBLUA   = $(LIBDIR)/liblua.a
 
 else
 ifeq ($(OS), mos)
@@ -247,6 +252,9 @@ ifeq ($(OS), mos)
   CFLAGS  += -noixemul -DNO_PPCINLINE_STDARG
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug
+
+  # the MorphOS build uses lua.library instead of liblua.a
+  LIBLUA   =
 
 else
 ifeq ($(OS), aros-i386)
@@ -354,7 +362,7 @@ $(OBJDIR)/%.o: %.c
 	@$(CC) $(CFLAGS) $< -o $@
 
 # for linking the target
-$(TARGET): libvstring/bin_$(OS)/libvstring.a lib_$(OS)/liblua.a $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): libvstring/bin_$(OS)/libvstring.a $(LIBLUA) $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -402,12 +410,12 @@ help:
 
 ## LIBVSTRING #########################
 
-libvstring/bin_$(OS)/libvstring.a:
-	@$(MAKE) -C libvstring
+libvstring/$(BINDIR)/libvstring.a:
+	@$(MAKE) -C libvstring OS=$(OS)
 
 ## LIBLUA #############################
 
-lib_$(OS)/liblua.a:
+$(LIBDIR)/liblua.a:
 	@$(MAKE) -C lua-5.1.5/src CC=$(CC) AR="$(AR) rcs" RANLIB=$(RANLIB) clean generic
 	@cp lua-5.1.5/src/liblua.a $@
 
