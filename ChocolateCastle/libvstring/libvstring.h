@@ -10,12 +10,6 @@
 #include <exec/types.h>
 #include <stdarg.h>
 
-#if defined(__amigaos4__)
-extern struct Library *SysBase;
-#else
-extern struct ExecBase *SysBase;
-#endif
-
 #ifndef __typedef_FMT_FUNC
 #define __typedef_FMT_FUNC
 typedef APTR (*FMT_FUNC)(APTR, UBYTE);
