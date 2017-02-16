@@ -8,10 +8,7 @@
 #ifndef CHC_GENERATOR_H
 #define CHC_GENERATOR_H
 
-typedef unsigned long IPTR;
-
 #include "support.h"
-
 
 extern struct MUI_CustomClass *GeneratorClass;
 
