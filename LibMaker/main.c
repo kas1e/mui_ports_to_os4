@@ -75,7 +75,7 @@ BOOL GetResources(void)
 	if (!(MUIMasterBase = (APTR)OpenLibrary("muimaster.library", 20))) return FALSE;
 	if (!(UtilityBase = (APTR)OpenLibrary("utility.library", 37))) return FALSE;
 	if (!(LocaleBase = (APTR)OpenLibrary("locale.library", 37))) return FALSE;
-	if (!(IconBase = (APTR)OpenLibrary("locale.library", 37))) return FALSE;
+	if (!(IconBase = (APTR)OpenLibrary("icon.library", 37))) return FALSE;
 #if defined(__MORPHOS__)
 	if (!(LuaBase = (APTR)OpenLibrary("lua.library", 51))) return FALSE;
 #endif
@@ -87,7 +87,6 @@ BOOL GetResources(void)
 	ILocale = (struct LocaleIFace *)GetInterface(LocaleBase, "main", 1, NULL);
 	IIcon = (struct IconIFace *)GetInterface(IconBase, "main", 1, NULL);
 #endif
-
 
 	if (!CreateApplicationClass()) return FALSE;
 	if (!CreateFunctionListClass()) return FALSE;
