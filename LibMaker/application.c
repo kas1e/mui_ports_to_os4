@@ -125,10 +125,10 @@ void DeleteApplicationClass(void)
    external command, which is slower.
 */
 
-#ifdef __amigaos4__
-static int LibMakerMakeDir(lua_State* L)
-#else
+#if defined(__MORPHOS__)
 LONG LibMakerMakeDir(LuaState *L)
+#else
+static int LibMakerMakeDir(lua_State* L)
 #endif
 {
 	CONST_STRPTR path;
@@ -525,14 +525,9 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				"into a separate file with name starting from \"f_\" followed by the function name. Makefile is modified accordingly. "
 				"If not checked, all the functions are placed in \"library.c\" file."),
 			MUIA_Group_Child, objs->ChkSeparatedFunctions = MUI_NewObjectM(MUIC_Image,
-				// we can't rely on default theme installed, proper background must
-				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
 				MUIA_Background, MUII_ButtonBack,
-				#else
-				MUIA_ShowSelState, TRUE,
-				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
@@ -553,14 +548,9 @@ static Object* CreateGeneratorGroup(struct AppObjects *objs)
 				"modified accordingly. If not checked, all the functions are placed in \"methods.c\" file. Note that the class dispatcher "
 				"is always placed in \"library.c\"."),
 			MUIA_Group_Child, objs->ChkSeparatedMethods = MUI_NewObjectM(MUIC_Image,
-				// we can't rely on default theme installed, proper background must
-				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
 				MUIA_Background, MUII_ButtonBack,
-				#else
-				MUIA_ShowSelState, TRUE,
-				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,

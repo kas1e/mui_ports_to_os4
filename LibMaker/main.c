@@ -179,10 +179,10 @@ Object *BuildGui(void)
 // Main()
 //==============================================================================================
 
-#ifdef __amigaos4__
-int main(UNUSED int argc, UNUSED char *argv[])
-#else
+#if defined(__MORPHOS__)
 ULONG Main(UNUSED struct WBStartup *wbmessage)
+#else
+int main(UNUSED int argc, UNUSED char *argv[])
 #endif
 {
 	ULONG result = RETURN_OK;

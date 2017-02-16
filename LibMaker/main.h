@@ -13,6 +13,7 @@
 #include <libraries/lua.h>
 #include <proto/lua.h>
 #else
+
 #include <stdarg.h>
 #include <strings.h>
 #include <lua.h>
