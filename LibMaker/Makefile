@@ -167,7 +167,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include -Ilua-5.1.5/src $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/bin_$(OS) -lvstring -Llib_$(OS) -llua
+LDLIBS   = -Llibvstring/bin_$(OS) -lvstring -Llib_$(OS) -llua -lm
 
 ###########################################################################
 # object files definition
