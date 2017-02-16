@@ -122,9 +122,9 @@ IPTR AttributeListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_
 
 	if (!ae)
 	{
-		msg->array[0] = LS(MSG_ATTRLIST_HEADER_TYPE, "\33lName");
-		msg->array[1] = LS(MSG_ATTRLIST_HEADER_ID, "\33lIdentifier");
-		msg->array[2] = LS(MSG_ATTRLIST_HEADER_USAGE, "\33lUsage");
+		msg->array[0] = (STRPTR)LS(MSG_ATTRLIST_HEADER_TYPE, "\33lName");
+		msg->array[1] = (STRPTR)LS(MSG_ATTRLIST_HEADER_ID, "\33lIdentifier");
+		msg->array[2] = (STRPTR)LS(MSG_ATTRLIST_HEADER_USAGE, "\33lUsage");
 	}
 	else
 	{

@@ -129,9 +129,9 @@ IPTR MethodListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_Lis
 
 	if (!me)
 	{
-		msg->array[0] = LS(MSG_METHLIST_HEADER_NAME, "\33lName");
-		msg->array[1] = LS(MSG_METHLIST_HEADER_IDENT, "\33lIdentifier");
-		msg->array[2] = LS(MSG_METHLIST_HEADER_MESSAGE, "\33lMessage");
+		msg->array[0] = (STRPTR)LS(MSG_METHLIST_HEADER_NAME, "\33lName");
+		msg->array[1] = (STRPTR)LS(MSG_METHLIST_HEADER_IDENT, "\33lIdentifier");
+		msg->array[2] = (STRPTR)LS(MSG_METHLIST_HEADER_MESSAGE, "\33lMessage");
 	}
 	else
 	{

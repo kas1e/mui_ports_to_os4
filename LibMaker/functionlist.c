@@ -315,9 +315,9 @@ IPTR FunctionListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 
 	if (!fe)
 	{
-		msg->array[0] = LS(MSG_FUNCLIST_HEADER_RESULT_TYPE, "\33cResult Type");
-		msg->array[1] = LS(MSG_FUNCLIST_HEADER_NAME, "\33cName");
-		msg->array[2] = LS(MSG_FUNCLIST_HEADER_ARGUMENTS, "\33cArguments");
+		msg->array[0] = (STRPTR)LS(MSG_FUNCLIST_HEADER_RESULT_TYPE, "\33cResult Type");
+		msg->array[1] = (STRPTR)LS(MSG_FUNCLIST_HEADER_NAME, "\33cName");
+		msg->array[2] = (STRPTR)LS(MSG_FUNCLIST_HEADER_ARGUMENTS, "\33cArguments");
 	}
 	else
 	{

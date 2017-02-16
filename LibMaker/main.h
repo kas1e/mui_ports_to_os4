@@ -12,6 +12,7 @@
 #if defined(__MORPHOS__)
 #include <libraries/lua.h>
 #include <proto/lua.h>
+
 #else
 
 #include <stdarg.h>
@@ -21,8 +22,13 @@
 
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 
+#if defined(__amigaos4__)
+#define AllocTaskPooled(size) AllocVecTags(size, AVT_Type, MEMF_ANY, TAG_DONE)
+#define FreeTaskPooled(mem, size) FreeVec(mem)
+#else
 #define AllocTaskPooled(size) AllocMem(size, MEMF_ANY)
 #define FreeTaskPooled(mem, size) FreeMem(mem, size)
+#endif
 
 APTR AllocVecTaskPooled(ULONG byteSize);
 void FreeVecTaskPooled(APTR memory);

@@ -20,6 +20,10 @@
 #include <lauxlib.h>
 #endif
 
+#if defined(__amigaos4__)
+#include <dos/obsolete.h>
+#endif
+
 #include <libraries/asl.h>
 
 #include <utility/tagitem.h>
