@@ -13,7 +13,7 @@ STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 	STRPTR s;
 	va_list copy;
 
-	__va_copy(copy, args);
+	va_copy(copy, args);
 
 	VNewRawDoFmt(fmt, RAWFMTFUNC_COUNT, (STRPTR)&l, args);
 
