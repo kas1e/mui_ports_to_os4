@@ -211,6 +211,7 @@ int main(UNUSED int argc, UNUSED char *argv[])
 // DoSuperNewM()
 //==============================================================================================
 
+#if defined(__MORPHOS__)
 Object* DoSuperNewM(Class *cl, Object *obj, ...)
 {
 	va_list args, args2;
@@ -251,12 +252,14 @@ Object* DoSuperNewM(Class *cl, Object *obj, ...)
 	}
 	return result;
 }
+#endif
 
 
 //==============================================================================================
 // MUI_NewObjectM()
 //==============================================================================================
 
+#if defined(__MORPHOS__)
 Object* MUI_NewObjectM(const char *classname, ...)
 {
 	va_list args, args2;
@@ -298,12 +301,14 @@ Object* MUI_NewObjectM(const char *classname, ...)
 	}
 	return result;
 }
+#endif
 
 
 //==============================================================================================
 // NewObjectM()
 //==============================================================================================
 
+#if defined(__MORPHOS__)
 Object* NewObjectM(Class *cl, const char *classname, ...)
 {
 	va_list args, args2;
@@ -345,6 +350,7 @@ Object* NewObjectM(Class *cl, const char *classname, ...)
 	}
 	return result;
 }
+#endif
 
 
 //==============================================================================================

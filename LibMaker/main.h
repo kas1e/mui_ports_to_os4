@@ -14,6 +14,9 @@
 #include <libraries/lua.h>
 #include <proto/lua.h>
 
+Object *DoSuperNewM(Class *cl, Object *obj, ...);
+Object *MUI_NewObjectM(const char *classname, ...);
+Object *NewObjectM(Class *cl, const char *classname, ...);
 #else
 
 #include <stdarg.h>
@@ -22,6 +25,10 @@
 #include <lualib.h>
 
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
+
+#define DoSuperNewM     DoSuperNew
+#define MUI_NewObjectM  MUI_NewObject
+#define NewObjectM      NewObject
 
 #if defined(__amigaos4__)
 #define AllocTaskPooled(size) AllocVecTags(size, AVT_Type, MEMF_ANY, TAG_DONE)
@@ -102,9 +109,6 @@ typedef const char* (*LuaReader)(LuaState*, APTR, LONG*);
 #define LDLERR_SPECIAL_CHARS_IN_PATH   96
 
 
-Object* DoSuperNewM(Class *cl, Object *obj, ...);
-Object* MUI_NewObjectM(const char *classname, ...);
-Object* NewObjectM(Class *cl, const char *classname, ...);
 ULONG XGet(Object *obj, ULONG attr);
 ULONG HexStrToULong(CONST_STRPTR s);
 struct RDArgs* ParseLine(char *line, const char *templ, LONG *params, struct RDArgs *srcargs);
