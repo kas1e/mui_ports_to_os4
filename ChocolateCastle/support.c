@@ -7,6 +7,7 @@
 #include <exec/rawfmt.h>
 #endif
 #include <libvstring.h>
+#include <SDI_stdarg.h>
 
 /* Filter tables for string gadgets */
 
@@ -193,6 +194,7 @@ BOOL check_pattern(STRPTR line, CONST_STRPTR pattern, struct Parser *parser)
 
 /// DoSuperNewM()
 
+#if defined(__MORPHOS__)
 Object* DoSuperNewM(Class *cl, Object *obj, ...)
 {
 	va_list args, args2;
@@ -233,11 +235,28 @@ Object* DoSuperNewM(Class *cl, Object *obj, ...)
 	}
 	return result;
 }
+#else
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
+{
+  Object *rc;
+  VA_LIST args;
 
+  VA_START(args, obj);
+  #if defined(__AROS__)
+  rc = (Object *)DoSuperNewTagList(cl, obj, NULL, (struct TagItem *)VA_ARG(args, IPTR));
+  #else
+  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, VA_ARG(args, ULONG), NULL);
+  #endif
+  VA_END(args);
+
+  return rc;
+}
+#endif
 
 ///
 /// MUI_NewObjectM()
 
+#if defined(__MORPHOS__)
 Object* MUI_NewObjectM(const char *classname, ...)
 {
 	va_list args, args2;
@@ -279,11 +298,12 @@ Object* MUI_NewObjectM(const char *classname, ...)
 	}
 	return result;
 }
-
+#endif
 
 ///
 /// NewObjectM()
 
+#if defined(__MORPHOS__)
 Object* NewObjectM(Class *cl, const char *classname, ...)
 {
 	va_list args, args2;
@@ -325,5 +345,6 @@ Object* NewObjectM(Class *cl, const char *classname, ...)
 	}
 	return result;
 }
+#endif
 
 ///
