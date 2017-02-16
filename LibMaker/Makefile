@@ -231,6 +231,7 @@ ifeq ($(OS), os3)
   LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui
 
   OBJS     += amigaos3_system.o
+  OBJS     += vastubs.o
 
   LIBLUA   = $(LIBDIR)/liblua.a
 
