@@ -252,6 +252,22 @@ Object* DoSuperNewM(Class *cl, Object *obj, ...)
 	}
 	return result;
 }
+#else
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
+{
+  Object *rc;
+  VA_LIST args;
+
+  VA_START(args, obj);
+  #if defined(__AROS__)
+  rc = (Object *)DoSuperNewTagList(cl, obj, NULL, (struct TagItem *)VA_ARG(args, IPTR));
+  #else
+  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, VA_ARG(args, ULONG), NULL);
+  #endif
+  VA_END(args);
+
+  return rc;
+}
 #endif
 
 
