@@ -512,7 +512,7 @@ IPTR ClassEditorNewAttribute(Class *cl, Object *obj)
 	struct ClassEditorData *d = INST_DATA(cl, obj);
 	struct AttributeEntry ae;
 
-	ae.ae_Name = LS(MSG_CLASSEDITOR_ATTRIBUTE_NOT_SPECIFIED, "not specified");
+	ae.ae_Name = (STRPTR)LS(MSG_CLASSEDITOR_ATTRIBUTE_NOT_SPECIFIED, "not specified");
 	ae.ae_Id = 0;
 	ae.ae_Usage = 0;
 	DoMethod(d->Objects.LstAttributes, MUIM_List_InsertSingle, (IPTR)&ae, MUIV_List_Insert_Bottom);
@@ -854,7 +854,7 @@ IPTR ClassEditorOpenMethodEditor(Class *cl, Object *obj, struct CEDP_OpenMethodE
 			struct MethodEntry me2;
 			BYTE i;
 
-			me2.me_Name = LS(MSG_METHODEDITOR_NEW_METHOD, "new method");
+			me2.me_Name = (STRPTR)LS(MSG_METHODEDITOR_NEW_METHOD, "new method");
 			me2.me_Id = 0;
 			me2.me_Message = (STRPTR)"";
 			me2.me_ArgCount = 0;

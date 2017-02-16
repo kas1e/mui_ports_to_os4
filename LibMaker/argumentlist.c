@@ -134,9 +134,9 @@ IPTR ArgumentListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 
 	if (!ae)
 	{
-		msg->array[0] = LS(MSG_ARGLIST_HEADER_TYPE, "\33rType");
-		msg->array[1] = LS(MSG_ARGLIST_HEADER_NAME, "\33lFormal Name");
-		msg->array[2] = LS(MSG_ARGLIST_HEADER_REGISTER, "\33lReg.");
+		msg->array[0] = (STRPTR)LS(MSG_ARGLIST_HEADER_TYPE, "\33rType");
+		msg->array[1] = (STRPTR)LS(MSG_ARGLIST_HEADER_NAME, "\33lFormal Name");
+		msg->array[2] = (STRPTR)LS(MSG_ARGLIST_HEADER_REGISTER, "\33lReg.");
 	}
 	else
 	{
