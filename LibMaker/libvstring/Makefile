@@ -214,8 +214,10 @@ ifeq ($(OS), os4)
   CRT      = newlib
   CPU      = -mcpu=powerpc
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
+  REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
+             -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
-              -DNO_PPCINLINE_STDARG -Wa,-mregnames
+              $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
 
 else
