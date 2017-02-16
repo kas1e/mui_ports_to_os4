@@ -77,9 +77,9 @@ IPTR AttributeListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUI
 
 	input = (struct AttributeEntry*)msg->entry;
 
-	if (entry = AllocTaskPooled(sizeof(struct AttributeEntry)))
+	if ((entry = AllocTaskPooled(sizeof(struct AttributeEntry))) != NULL)
 	{
-		if (entry->ae_Name = StrNew(input->ae_Name))
+		if ((entry->ae_Name = StrNew(input->ae_Name)) != NULL)
 		{
 			entry->ae_Id = input->ae_Id;
 			entry->ae_Usage = input->ae_Usage;
