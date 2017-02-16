@@ -173,7 +173,8 @@ LDLIBS   = -Llibvstring/bin_$(OS) -lvstring -Llib_$(OS) -llua
 # object files definition
 #
 
-OBJS = application.o \
+OBJS = main.o \
+       application.o \
        functionlist.o \
        functioneditor.o \
        argumentlist.o \
@@ -181,7 +182,6 @@ OBJS = application.o \
        attributelist.o \
        methodlist.o \
        methodeditor.o
-#main.o \
 
 
 # different options per target OS
