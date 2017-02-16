@@ -39,7 +39,6 @@
   NOTE: due to ReadArgs() limitation all '*' characters are replaced with '^'.
 */
 
-extern struct Library *SysBase, *IntuitionBase, *MUIMasterBase;
 struct MUI_CustomClass *ApplicationClass = 0;
 
 struct AppObjects
@@ -149,11 +148,11 @@ LONG LibMakerMakeDir(LuaState *L)
 	{
 		char fault[128];
 
-		Fault(IoErr(), "", fault, 128);
-		#ifdef __amigaos4__
-		lua_error(L);
-		#else
+		Fault(IoErr(), (STRPTR)"", fault, sizeof(fault));
+		#if defined(__MORPHOS__)
 		LuaErrorF(L, &fault[2]);             // Skipping colon added by Fault().
+		#else
+		lua_error(L);
 		#endif
 	}
 
@@ -306,14 +305,9 @@ static Object* CreateGroup2(struct AppObjects *objs)
 				"Adds AltiVec detection code to the library initialization and sets 'HaveAltiVec' field in the library base accordingly. "
 				"Note that non-AltiVec version of the code should be always provided."),
 			MUIA_Group_Child, objs->ChkAltiVec = MUI_NewObjectM(MUIC_Image,
-				// we can't rely on default theme installed, proper background must
-				#ifdef __amigaos4__
 				ImageButtonFrame,
 				MUIA_ShowSelState, FALSE,
 				MUIA_Background, MUII_ButtonBack,
-				#else
-				MUIA_ShowSelState, TRUE,
-				#endif
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
@@ -332,10 +326,12 @@ static Object* CreateGroup2(struct AppObjects *objs)
 				" to the system during library initialization. Class methods and attributes may be edited in the class editor, which"
 				" is opened with the button."),
 			MUIA_Group_Child, objs->ChkBoopsi = MUI_NewObjectM(MUIC_Image,
+				ImageButtonFrame,
+				MUIA_ShowSelState, FALSE,
+				MUIA_Background, MUII_ButtonBack,
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
-				MUIA_ShowSelState, TRUE,
 				MUIA_InputMode, MUIV_InputMode_Toggle,
 				MUIA_CycleChain, TRUE,
 				#warning Remove when implemented
@@ -361,10 +357,12 @@ static Object* CreateGroup2(struct AppObjects *objs)
 			MUIA_ShortHelp, LS(MSG_MUI_CHECKMARK_HELP, "Turns the library into an external public MUI class. Class methods and "
 				"attributes may be edited in the class editor, which is opened with the button."),
 			MUIA_Group_Child, objs->ChkMui = MUI_NewObjectM(MUIC_Image,
+				ImageButtonFrame,
+				MUIA_ShowSelState, FALSE,
+				MUIA_Background, MUII_ButtonBack,
 				MUIA_Image_Spec, "6:15",
 				MUIA_Image_FreeHoriz, FALSE,
 				MUIA_Image_FreeVert, FALSE,
-				MUIA_ShowSelState, TRUE,
 				MUIA_InputMode, MUIV_InputMode_Toggle,
 				MUIA_CycleChain, TRUE,
 				#warning Remove when implemented
@@ -748,46 +746,14 @@ static void HandleRunError(LuaState *L, LONG error)
 // STPutChar()
 //==============================================================================================
 
-#ifdef __amigaos4__
-static void STPutChar(struct Hook *h,Object *obj, char c)
-#else
-static void STPutChar(void)
-#endif
+HOOKPROTONO(STPutChar, void, char c)
 {
-	#ifndef __amigaos4__
-	struct Hook *h = (struct Hook*)REG_A0;
-	char c = (char)REG_A1;
-	#endif
 	char *p;
 
-	p = (char*)h->h_Data;
+	p = (char*)hook->h_Data;
 	*p++ = c;
-	h->h_Data = (APTR)p;
+	hook->h_Data = (APTR)p;
 }
-
-#ifdef __amigaos4__
-struct Hook STPutCharHook = {
-	{NULL, NULL},
-	(HOOKFUNC)&STPutChar,
-	NULL,
-	NULL
-};
-
-
-#else
-static const struct EmulLibEntry STPutCharGate = {
-	TRAP_LIB,
-	0,
-	(void(*)(void))STPutChar
-};
-
-struct Hook STPutCharHook = {
-	{NULL, NULL},
-	(HOOKFUNC)&STPutCharGate,
-	NULL,
-	NULL
-};
-#endif
 
 
 //==============================================================================================
@@ -798,10 +764,10 @@ static void SetToday(Object *datestr)
 {
 	struct DateStamp ds;
 	char dbuf[12];
+	MakeHookWithData(STPutCharHook, STPutChar, dbuf);
 
 	DateStamp(&ds);
-	STPutCharHook.h_Data = (APTR)dbuf;
-	FormatDate(Loc, "%d.%m.%Y", &ds, &STPutCharHook);
+	FormatDate(Loc, (STRPTR)"%d.%m.%Y", &ds, &STPutCharHook);
 	XSet(datestr, MUIA_String_Contents, dbuf);
 }
 
@@ -818,7 +784,7 @@ static char* MergeDrawerWithFile(char *drawer, char *file)
 
 	pathlen = StrLen(drawer) + StrLen(file) + 8;
 
-	if (path = AllocVecTaskPooled(pathlen))
+	if ((path = AllocVecTaskPooled(pathlen)) != NULL)
 	{
 		StrCopy(drawer, path);
 		if (AddPart(path, file, pathlen)) return path;
@@ -854,9 +820,9 @@ STRPTR* ScanScripts(void)
 
 	SetIoErr(0);
 
-	if (fib = AllocDosObjectTags(DOS_FIB, TAG_END))
+	if ((fib = AllocDosObjectTags(DOS_FIB, TAG_END)) != NULL)
 	{
-		if (script_dir = Lock("PROGDIR:scripts", SHARED_LOCK))
+		if ((script_dir = Lock("PROGDIR:scripts", SHARED_LOCK)) != (BPTR)NULL)
 		{
 			if (Examine(script_dir, fib))
 			{
@@ -868,9 +834,9 @@ STRPTR* ScanScripts(void)
 					if (fib->fib_EntryType > 0)
 					#endif
 					{
-						if (n = AllocTaskPooled(sizeof(struct Node)))
+						if ((n = AllocTaskPooled(sizeof(struct Node))) != NULL)
 						{
-							if (n->ln_Name = StrNew(fib->fib_FileName))
+							if ((n->ln_Name = StrNew(fib->fib_FileName)) != NULL)
 							{
 								AddTail(&string_list, n);
 								counter++;
@@ -901,7 +867,7 @@ STRPTR* ScanScripts(void)
 
 	#warning Display a requester?
 
-	if (err = IoErr())
+	if ((err = IoErr()) != 0)
 	{
 		PrintFault(err, "LibMaker");
 		return NULL;
@@ -909,7 +875,7 @@ STRPTR* ScanScripts(void)
 
 	if (counter > 0)
 	{
-		if (a = AllocVecTaskPooled(sizeof(STRPTR) * (counter + 1)))
+		if ((a = AllocVecTaskPooled(sizeof(STRPTR) * (counter + 1))) != NULL)
 		{
 			LONG i;
 
@@ -937,9 +903,9 @@ IPTR ApplicationNew(Class *cl, Object *obj, struct opSet *msg)
 {
 	struct AppObjects objs;
 
-	if (objs.Scripts = ScanScripts())
+	if ((objs.Scripts = ScanScripts()) != NULL)
 	{
-		if (obj = DoSuperNewM(cl, obj,
+		if ((obj = DoSuperNewM(cl, obj,
 			MUIA_Application_Window, objs.WndMain = CreateMainWindow(&objs),
 			MUIA_Application_Window, objs.WndFunctionEditor = NewObjectM(FunctionEditorClass->mcc_Class, NULL,
 			TAG_END),
@@ -947,21 +913,21 @@ IPTR ApplicationNew(Class *cl, Object *obj, struct opSet *msg)
 			TAG_END),
 			MUIA_Application_Window, objs.WndAbout = MUI_NewObjectM(MUIC_Aboutbox,
 				MUIA_Aboutbox_Credits, APP_ABOUT,
-				#ifdef __amigaos4__
-				MUIA_Aboutbox_Build, APP_VER,
-				#else
+				#if defined(__MORPHOS__)
 				MUIA_Aboutbox_Build, __SVNVERSION__,
+				#else
+				MUIA_Aboutbox_Build, APP_VER,
 				#endif
 			TAG_END),
 			MUIA_Application_Menustrip, CreateAppMenu(),
-		TAG_MORE, msg->ops_AttrList))
+		TAG_MORE, msg->ops_AttrList)) != NULL)
 		{
 			struct ObjData *d = INST_DATA(cl, obj);
 
 			SetToday(objs.StrLibDate);
 			d->Objects = objs;
 
-			if (d->FileReq = MUI_AllocAslRequestTags(ASL_FileRequest, TAG_END))
+			if ((d->FileReq = MUI_AllocAslRequestTags(ASL_FileRequest, TAG_END)) != NULL)
 			{
 				return (IPTR)obj;
 			}
@@ -987,7 +953,7 @@ IPTR ApplicationSet(Class *cl, Object *obj, struct opSet *msg)
 
 	tagptr = msg->ops_AttrList;
 
-	while (tag = NextTagItem(&tagptr))
+	while ((tag = NextTagItem(&tagptr)) != NULL)
 	{
 		switch (tag->ti_Tag)
 		{
@@ -1235,7 +1201,7 @@ struct LuaLibReg RegFuncs[2] = {
 	{ NULL, NULL }
 };
 
-#ifdef __amigaos4__
+#if !defined(__MORPHOS__)
 
 struct LuaMemoryData
 {
@@ -1248,15 +1214,14 @@ typedef struct LuaMemoryReaderData
 	char* Block;
 	LONG Length;
 	LONG Position;
-};
+} LuaMemoryReaderData;
 
 
 typedef struct LuaFileReaderData
 {
 	BPTR Handle;
     char *Buffer;
-
-};
+} LuaFileReaderData;
 
 const char* memory_reader(UNUSED LuaState *s, APTR data, LONG *size)
 {
@@ -1279,10 +1244,9 @@ const char* file_reader(UNUSED LuaState *s, APTR data, LONG *size)
 
 LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 {
+        LONG result = 0;
 		APTR pool;
 		pool = CreatePool(MEMF_ANY, 16384, 16384);
-
-        LONG result = 0;
 
         if (reader == LUA_READER_MEMORY)
         {
@@ -1300,7 +1264,7 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
                 struct LuaFileReaderData lfrd;
                 char *fname = (char*)data;
 
-				if (lfrd.Buffer = (char*)AllocPooled(pool, CODE_BUFFER_SIZE))
+				if ((lfrd.Buffer = (char*)AllocPooled(pool, CODE_BUFFER_SIZE)) != NULL)
 				{
                         BOOL close_input = FALSE;
 
@@ -1344,21 +1308,21 @@ IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 
 	script_set = XGet(d->Objects.CycSrciptSet, MUIA_Cycle_Active);
 
-	if (script_path = FmtNew("PROGDIR:scripts/%s/libgen.lua", d->Objects.Scripts[script_set]))
+	if ((script_path = FmtNew("PROGDIR:scripts/%s/libgen.lua", d->Objects.Scripts[script_set])) != NULL)
 	{
-		#ifdef __amigaos4__
-		if (L = LuaNewState())
+		#if defined(__MORPHOS__)
+		if ((L = LuaNewState(NULL, NULL)) != NULL)
 		#else
-		if (L = LuaNewState(NULL, NULL))
+		if ((L = LuaNewState()) != NULL)
 		#endif
 		{
-			#ifdef __amigaos4__
+			#if defined(__MORPHOS__)
+			LuaRegisterModule(L, "libmaker", RegFuncs);
+			#else
 			// on morphos LuaNewState() contain luaL_openlibs() for init necessary inbuild modules, doing it manually
 			luaL_openlibs(L);
 			// equvalent of morphos's LuaRegisterModule()
 			luaL_openlib(L,"libmaker", RegFuncs,0);
-			#else
-			LuaRegisterModule(L, "libmaker", RegFuncs);
 			#endif
 
 			load_result = LuaLoad(L, LUA_READER_FILE, script_path, "@libgen");
@@ -1435,7 +1399,7 @@ IPTR ApplicationGenerateCode(Class *cl, Object *obj)
 
 				/* Change current directory to the code destination. */
 
-				if (destdir = Lock((STRPTR)XGet(d->Objects.StrDestDir, MUIA_String_Contents), SHARED_LOCK))
+				if ((destdir = Lock((STRPTR)XGet(d->Objects.StrDestDir, MUIA_String_Contents), SHARED_LOCK)) != (BPTR)NULL)
 				{
 					olddir = CurrentDir(destdir);
 
@@ -1544,7 +1508,7 @@ IPTR ApplicationCloseFunctionEditor(Class *cl, Object *obj, struct APPP_CloseFun
 		}
 		else
 		{
-			if (fargs = AllocVecTaskPooled(fe.fe_ArgCount * sizeof(struct FunctionArgument)))
+			if ((fargs = AllocVecTaskPooled(fe.fe_ArgCount * sizeof(struct FunctionArgument))) != NULL)
 			{
 				/*-------------------------*/
 				/* Get function arguments. */
@@ -1606,7 +1570,7 @@ IPTR ApplicationSaveProjectByName(Class *cl, Object *obj, struct APPP_SaveProjec
 
 	SetIoErr(0);
 
-	if (file = Open(msg->Path, MODE_NEWFILE))
+	if ((file = Open(msg->Path, MODE_NEWFILE)) != (BPTR)NULL)
 	{
 		boopsi = XGet(d->Objects.ChkBoopsi, MUIA_Selected);
 		mui = XGet(d->Objects.ChkMui, MUIA_Selected);
@@ -1671,7 +1635,7 @@ IPTR ApplicationSaveProjectByName(Class *cl, Object *obj, struct APPP_SaveProjec
 		Close(file);
 	}
 
-	if (error = IoErr())
+	if ((error = IoErr()) != 0)
 	{
 		char fault[128];
 
@@ -1716,7 +1680,7 @@ IPTR ApplicationSaveProjectByReq(Class *cl, Object *obj)
 	{
 		char *full_path;
 
-		if (full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File))
+		if ((full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File)) != NULL)
 		{
 			DoMethod(obj, APPM_SaveProjectByName, (IPTR)full_path);
 			FreeVecTaskPooled(full_path);
@@ -1746,7 +1710,7 @@ IPTR ApplicationSaveProject(Class *cl, Object *obj)
 	{
 		char *full_path;
 
-		if (full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File))
+		if ((full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File)) != NULL)
 		{
 			DoMethod(obj, APPM_SaveProjectByName, (IPTR)full_path);
 			FreeVecTaskPooled(full_path);
@@ -1778,7 +1742,7 @@ IPTR ApplicationOpenProjectByReq(Class *cl, Object *obj)
 	{
 		char *full_path;
 
-		if (full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File))
+		if ((full_path = MergeDrawerWithFile(d->FileReq->fr_Drawer, d->FileReq->fr_File)) != NULL)
 		{
 			DoMethod(obj, APPM_OpenProjectByName, (IPTR)full_path);
 			FreeVecTaskPooled(full_path);
@@ -1802,13 +1766,13 @@ IPTR ApplicationOpenProjectByName(Class *cl, Object *obj, struct APPP_OpenProjec
 
 	SetIoErr(0);
 
-	if (file = Open(msg->Path, MODE_OLDFILE))
+	if ((file = Open(msg->Path, MODE_OLDFILE)) != (BPTR)NULL)
 	{
 		LibraryDefLoader(obj, d, file);
 		Close(file);
 	}
 
-	if (error = IoErr())
+	if ((error = IoErr()) != 0)
 	{
 		if (error > 100)
 		{
@@ -1819,7 +1783,7 @@ IPTR ApplicationOpenProjectByName(Class *cl, Object *obj, struct APPP_OpenProjec
 		}
 		else
 		{
-			char *message = "?";
+			const char *message = "?";
 
 			switch (error)
 			{
@@ -1883,7 +1847,7 @@ IPTR ApplicationOpenClassEditor(Class *cl, Object *obj)
 // ApplicationCloseClassEditor()
 //==============================================================================================
 
-IPTR ApplicationCloseClassEditor(Class *cl, Object *obj, struct APPP_CloseClassEditor *msg)
+IPTR ApplicationCloseClassEditor(Class *cl, Object *obj, UNUSED struct APPP_CloseClassEditor *msg)
 {
 	struct ObjData *d = INST_DATA(cl, obj);
 
@@ -1985,7 +1949,7 @@ static LONG FindScriptIndex(STRPTR name, STRPTR *scripts)
 	LONG i = 0;
 	STRPTR script;
 
-	while (script = *scripts++)
+	while ((script = *scripts++) != NULL)
 	{
 		if (StrEqu(name, script)) return i;
 		i++;
@@ -2000,18 +1964,20 @@ static LONG FindScriptIndex(STRPTR name, STRPTR *scripts)
 // NoSpecialChars()
 //==============================================================================================
 
-static BOOL NoSpecialChars(STRPTR path)
+static BOOL NoSpecialChars(CONST_STRPTR path)
 {
-	char specials[] = "?#()|~%'[]";
-	char c, d, *p, *s;
+	const char *specials = "?#()|~%'[]";
+	char c, d;
+	CONST_STRPTR p;
+	const char *s;
 
 	p = path;
 
-	while (c = *p++)
+	while ((c = *p++) != '\0')
 	{
 		s = specials;
 
-		while (d = *s++)
+		while ((d = *s++) != '\0')
 		{
 			if (c == d) return FALSE;
 		}
@@ -2064,7 +2030,7 @@ static void LoadArguments(BPTR file, STRPTR line, struct FunctionEntry *fe)
 
 			if (StrEqu(line, "ENDFUNCTION\n")) break;
 
-			if (args = ParseLine(line, "ARGUMENT/S/A,TYPE/K/A,NAME/K/A,M68KREG/K", params, &srcargs))
+			if ((args = ParseLine(line, "ARGUMENT/S/A,TYPE/K/A,NAME/K/A,M68KREG/K", params, &srcargs)) != NULL)
 			{
 				STRPTR argtype, argname;
 
@@ -2077,9 +2043,9 @@ static void LoadArguments(BPTR file, STRPTR line, struct FunctionEntry *fe)
 				{
 					if (StrLen(argname) <= MAXLEN_ARGUMENT_NAME)
 					{
-						if (fe->fe_Arguments[fe->fe_ArgCount].fa_Type = StrNew(argtype))
+						if ((fe->fe_Arguments[fe->fe_ArgCount].fa_Type = StrNew(argtype)) != NULL)
 						{
-							if (fe->fe_Arguments[fe->fe_ArgCount].fa_Name = StrNew(argname))
+							if ((fe->fe_Arguments[fe->fe_ArgCount].fa_Name = StrNew(argname)) != NULL)
 							{
 								fe->fe_ArgCount++;
 							}
@@ -2126,7 +2092,7 @@ static void LoadFunctions(Object *app, struct ObjData *d, BPTR file, STRPTR line
 				continue;
 			}
 
-			if (args = ParseLine(line, "GENERATOR/S/A,TYPE/K/A,DEST/K/A,INSTALL/K,INCDIR/K,SFUNCTIONS/S,SMETHODS/S", params, &srcargs))
+			if ((args = ParseLine(line, "GENERATOR/S/A,TYPE/K/A,DEST/K/A,INSTALL/K,INCDIR/K,SFUNCTIONS/S,SMETHODS/S", params, &srcargs)) != NULL)
 			{
 				if (!have_generator_config)
 				{
@@ -2162,7 +2128,7 @@ static void LoadFunctions(Object *app, struct ObjData *d, BPTR file, STRPTR line
 			}
 			else SetIoErr(0);
 
-			if (args = ParseLine(line, "FUNCTION/S/A,NAME/K/A,RETTYPE/K/A", params, &srcargs))
+			if ((args = ParseLine(line, "FUNCTION/S/A,NAME/K/A,RETTYPE/K/A", params, &srcargs)) != NULL)
 			{
 				STRPTR funcname, functype;
 
@@ -2175,9 +2141,9 @@ static void LoadFunctions(Object *app, struct ObjData *d, BPTR file, STRPTR line
 				{
 					if (StrLen(functype) <= MAXLEN_TYPE_SPEC)
 					{
-						if (fe.fe_Name = StrNew(funcname))
+						if ((fe.fe_Name = StrNew(funcname)) != NULL)
 						{
-							if (fe.fe_ReturnType = StrNew(functype))
+							if ((fe.fe_ReturnType = StrNew(functype)) != NULL)
 							{
 								LoadArguments(file, line, &fe);
 								if (!IoErr()) DoMethod(app, APPM_AddFunction, (IPTR)&fe);
@@ -2206,7 +2172,7 @@ static void LoadFunctions(Object *app, struct ObjData *d, BPTR file, STRPTR line
 static void LoadLibrary(Object *app, struct ObjData *d, BPTR file, STRPTR line)
 {
 	struct RDArgs *args, srcargs;
-	STRPTR defbase = "Base";
+	CONST_STRPTR defbase = "Base";
 	LONG params[10] = {0, 0, 0, 0, 0, 0, (LONG)defbase, 0, 0, 0};
 	BOOL loadclass = FALSE;
 
@@ -2215,8 +2181,8 @@ static void LoadLibrary(Object *app, struct ObjData *d, BPTR file, STRPTR line)
 
 	if (ReadLine(file, line))
 	{
-		if (args = ParseLine(line, "LIBRARY/S/A,NAME/K/A,VER/K/N/A,REV/K/N/A,DATE/K/A,COPYRIGHT/K/A,BASE/K,ALTIVEC/S,BOOPSI/S,MUI/S",
-			params, &srcargs))
+		if ((args = ParseLine(line, "LIBRARY/S/A,NAME/K/A,VER/K/N/A,REV/K/N/A,DATE/K/A,COPYRIGHT/K/A,BASE/K,ALTIVEC/S,BOOPSI/S,MUI/S",
+			params, &srcargs)) != NULL)
 		{
 			if ((StrLen((STRPTR)params[1]) <= MAXLEN_LIBRARY_NAME)
 			 && (StrLen((STRPTR)params[4]) <= 10)
