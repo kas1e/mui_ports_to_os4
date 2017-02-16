@@ -75,12 +75,11 @@ IPTR ArgumentListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP
 
 	input = (struct ArgumentEntry*)msg->entry;
 
-	if (entry = AllocTaskPooled(sizeof(struct ArgumentEntry)))
+	if ((entry = AllocTaskPooled(sizeof(struct ArgumentEntry))) != NULL)
 	{
-		if (entry->ae_Name = StrNew(input->ae_Name))
+		if ((entry->ae_Name = StrNew(input->ae_Name)) != NULL)
 		{
-
-			if (entry->ae_Type = StrNew(input->ae_Type))
+			if ((entry->ae_Type = StrNew(input->ae_Type)) != NULL)
 			{
 				entry->ae_Register = input->ae_Register;
 				return (IPTR)entry;
