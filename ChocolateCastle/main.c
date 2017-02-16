@@ -87,7 +87,17 @@ void free_classes(void)
 
 BOOL get_resources(void)
 {
+	#if defined(__amigaos4__)
+	if ((MPool = AllocSysObjectTags(ASOT_MEMPOOL,
+      ASOPOOL_MFlags,    MEMF_SHARED,
+      ASOPOOL_Puddle,    16384,
+      ASOPOOL_Threshold, 16384,
+      ASOPOOL_Name,      (ULONG)"ChocolateCastle shared pool",
+      ASOPOOL_LockMem,   FALSE,
+      TAG_DONE)) != NULL)
+	#else
 	if ((MPool = CreatePool(MEMF_ANY, 16384, 16384)) != NULL)
+	#endif
 	{
 		if ((UtilityBase = (APTR)OpenLibrary((STRPTR)"utility.library", 39)) != NULL)
 		{
@@ -159,7 +169,14 @@ void free_resources(void)
 	if (MUIMasterBase) CloseLibrary((struct Library *)MUIMasterBase);
 	if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
 	if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
-	if (MPool) DeletePool(MPool);
+	if (MPool)
+	{
+		#if defined(__amigaos4__)
+		FreeSysObject(ASOT_MEMPOOL, MPool);
+		#else
+		DeletePool(MPool);
+		#endif
+	}
 	return;
 }
 
