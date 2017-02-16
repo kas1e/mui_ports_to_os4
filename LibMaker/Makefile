@@ -228,6 +228,7 @@ ifeq ($(OS), os3)
   LDLIBS  += -ldebug -lmui
 
   OBJS     += amigaos3_system.o
+  OBJS     += vastubs.o
 
 else
 ifeq ($(OS), mos)
