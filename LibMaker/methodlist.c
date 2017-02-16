@@ -78,11 +78,11 @@ IPTR MethodListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 
 	input = (struct MethodEntry*)msg->entry;
 
-	if (entry = AllocTaskPooled(sizeof(struct MethodEntry)))
+	if ((entry = AllocTaskPooled(sizeof(struct MethodEntry))) != NULL)
 	{
-		if (entry->me_Name = StrNew(input->me_Name))
+		if ((entry->me_Name = StrNew(input->me_Name)) != NULL)
 		{
-			if (entry->me_Message = StrNew(input->me_Message))
+			if ((entry->me_Message = StrNew(input->me_Message)) != NULL)
 			{
 				entry->me_Id = input->me_Id;
 				entry->me_ArgCount = input->me_ArgCount;
