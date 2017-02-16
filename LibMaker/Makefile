@@ -205,7 +205,7 @@ ifeq ($(OS), os4)
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               -DNO_PPCINLINE_STDARG -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
-  LDLIBS   += -Llib_$(OS) -llua -lauto
+  LDLIBS   += -L$(LIBDIR) -llua -lauto
 
   OBJS     += amigaos4_system.o
 
@@ -228,7 +228,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -mcrt=clib2 -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
-  LDLIBS  += -Llib_$(OS) -llua -ldebug -lmui
+  LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui
 
   OBJS     += amigaos3_system.o
 
