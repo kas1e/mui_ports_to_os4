@@ -21,6 +21,7 @@
 #include <libraries/asl.h>
 #include <workbench/workbench.h>
 #include <proto/icon.h>
+#include <SDI_stdarg.h>
 
 struct DiskObject *disk_object = NULL;
 
