@@ -468,8 +468,8 @@ IPTR FunctionEditorAddArgument(Class *cl, Object *obj)
 	struct FunctionEditorData *d = INST_DATA(cl, obj);
 	struct ArgumentEntry ae;
 
-	ae.ae_Name = LS(MSG_FUNCEDITOR_ARGNAME_NOT_SPECIFIED, "not specified");
-	ae.ae_Type = LS(MSG_FUNCEDITOR_ARGTYPE_NOT_SPECIFIED, "not specified");
+	ae.ae_Name = (STRPTR)LS(MSG_FUNCEDITOR_ARGNAME_NOT_SPECIFIED, "not specified");
+	ae.ae_Type = (STRPTR)LS(MSG_FUNCEDITOR_ARGTYPE_NOT_SPECIFIED, "not specified");
 	ae.ae_Register = M68K_REG_UNDEFINED;
 
 	DoMethod(d->Objects.LstArguments, MUIM_List_InsertSingle, (IPTR)&ae, MUIV_List_Insert_Bottom);
