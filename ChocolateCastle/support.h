@@ -11,6 +11,8 @@
 #include <clib/alib_protos.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <SDI_compiler.h>
+#include <SDI_stdarg.h>
 
 #include "methodlist.h"
 #include "generator.h"
@@ -99,19 +101,11 @@ Object *DoSuperNewM(Class *cl, Object *obj, ...);
 Object *MUI_NewObjectM(const char *classname, ...);
 Object *NewObjectM(Class *cl, const char *classname, ...);
 #else
-
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || (__GNUC__ >= 3)
-#define DoSuperNewM(cl, obj, ...) DoSuperNew(cl, obj, __VA_ARGS__)
-#define MUI_NewObjectM(classname, ...) MUI_NewObject(classname, __VA_ARGS__)
-#define NewObjectM(cl, classname, ...) NewObject(cl, classname, __VA_ARGS__)
-#elif (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
-#define DoSuperNewM(cl, obj, ...) DoSuperNew(cl, obj, ## vargs)
-#define MUI_NewObjectM(classname, vargs...) MUI_NewObject(classname, ## vargs)
-#define NewObjectM(cl, classname, vargs...) NewObject(cl, classname, ## vargs)
-#endif
-
+#define DoSuperNewM     DoSuperNew
+#define MUI_NewObjectM  MUI_NewObject
+#define NewObjectM      NewObject
 #endif
 
 /*############################################################################*/
