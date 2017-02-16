@@ -1,10 +1,10 @@
 /* ClassEditorClass header. */
 
 #include <libraries/mui.h>
-#ifdef __amigaos4__
-#include <lua.h>
-#else
+#if defined(__MORPHOS__)
 #include <libraries/lua.h>
+#else
+#include <lua.h>
 #endif
 
 extern struct MUI_CustomClass *ClassEditorClass;
@@ -48,7 +48,7 @@ struct CEDP_PushToLua
 	lua_State *L;
 	#else
 	LuaState *L;
-	#endif	
+	#endif
 };
 
 
