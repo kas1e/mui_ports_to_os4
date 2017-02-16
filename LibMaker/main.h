@@ -10,6 +10,7 @@
 #include <SDI_hook.h>
 
 #if defined(__MORPHOS__)
+#include <stdarg.h>
 #include <libraries/lua.h>
 #include <proto/lua.h>
 
