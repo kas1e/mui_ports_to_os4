@@ -1240,7 +1240,18 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
 {
         LONG result = 0;
 		APTR pool;
+
+		#if defined(__amigaos4__)
+	    pool = AllocSysObjectTags(ASOT_MEMPOOL,
+            ASOPOOL_MFlags,    MEMF_SHARED,
+            ASOPOOL_Puddle,    16384,
+            ASOPOOL_Threshold, 16384,
+            ASOPOOL_Name,      (ULONG)"LibMaker lua pool",
+            ASOPOOL_LockMem,   FALSE,
+            TAG_DONE);
+		#else
 		pool = CreatePool(MEMF_ANY, 16384, 16384);
+		#endif
 
         if (reader == LUA_READER_MEMORY)
         {
@@ -1277,7 +1288,12 @@ LONG LuaLoad(LuaState *ls, LuaReader reader, APTR data, const char *name)
                         else result = LUA_ERRERR;
 
 						FreePooled(pool, lfrd.Buffer, CODE_BUFFER_SIZE);
+
+						#if defined(__amigaos4__)
+						FreeSysObject(ASOT_MEMPOOL, pool);
+						#else
 						DeletePool(pool);
+						#endif
                 }
                 else result = LUA_ERRMEM;
         }
