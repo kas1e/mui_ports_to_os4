@@ -450,7 +450,7 @@ IPTR ClassEditorSet(Class *cl, Object *obj, struct opSet *msg)
 
 	tagptr = msg->ops_AttrList;
 
-	while (tag = NextTagItem(&tagptr))
+	while ((tag = NextTagItem(&tagptr)) != NULL)
 	{
 		switch (tag->ti_Tag)
 		{
@@ -484,7 +484,7 @@ IPTR ClassEditorSet(Class *cl, Object *obj, struct opSet *msg)
 
 IPTR ClassEditorGet(Class *cl, Object *obj, struct opGet *msg)
 {
-	struct ClassEditorData *d = INST_DATA(cl, obj);
+//	struct ClassEditorData *d = INST_DATA(cl, obj);
 	IPTR result = TRUE;
 
 	switch (msg->opg_AttrID)
@@ -532,7 +532,7 @@ IPTR ClassEditorUpdateAttrFromGadgets(Class *cl, Object *obj)
 	struct AttributeEntry *ae = NULL;
 	STRPTR new_name = NULL;
 
-	if (new_name = StrNew((STRPTR)XGet(d->Objects.StrAttrName, MUIA_String_Contents)))
+	if ((new_name = StrNew((STRPTR)XGet(d->Objects.StrAttrName, MUIA_String_Contents))) != NULL)
 	{
 		DoMethod(d->Objects.LstAttributes, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, (IPTR)&ae);
 
@@ -623,9 +623,9 @@ IPTR ClassEditorWriteClassSpec(Class *cl, Object *obj, struct CEDP_WriteClassSpe
 // ReadMethodContents()
 //==============================================================================================
 
-static void ReadMethodContents(Object *obj, struct ClassEditorData *d, BPTR file, STRPTR line, struct MethodEntry *me)
+static void ReadMethodContents(UNUSED Object *obj, UNUSED struct ClassEditorData *d, BPTR file, STRPTR line, struct MethodEntry *me)
 {
-	struct RDArgs *args, srcargs;
+//	struct RDArgs *args, srcargs;
 	BYTE i;
 
 	while (!IoErr())
@@ -659,7 +659,7 @@ static void ReadMethod(Object *obj, struct ClassEditorData *d, BPTR file, STRPTR
 	struct RDArgs *args, srcargs;
 	LONG params[4] = { 0, 0, 0, 0 };
 
-	if (args = ParseLine(line, "METHOD/S/A,NAME/K/A,ID/K/A,MESSAGE/K/A", params, &srcargs))
+	if ((args = ParseLine(line, "METHOD/S/A,NAME/K/A,ID/K/A,MESSAGE/K/A", params, &srcargs)) != NULL)
 	{
 		if ((StrLen((CONST_STRPTR)params[1]) <= MAXLEN_METHOD_NAME)
 		 && (StrLen((CONST_STRPTR)params[2]) <= 8)
@@ -700,7 +700,7 @@ static void ReadClassContents(Object *obj, struct ClassEditorData *d, BPTR file,
 
 			if (StrNEqu(line, "ATTRIBUTE ", 10))
 			{
-				if (args = ParseLine(line, "ATTRIBUTE/S/A,NAME/K/A,ID/K/A,USAGE/K/N/A", params, &srcargs))
+				if ((args = ParseLine(line, "ATTRIBUTE/S/A,NAME/K/A,ID/K/A,USAGE/K/N/A", params, &srcargs)) != NULL)
 				{
 					struct AttributeEntry ae;
 
@@ -735,7 +735,7 @@ IPTR ClassEditorReadClassSpec(Class *cl, Object *obj, struct CEDP_ReadClassSpec 
 	struct RDArgs *args, srcargs;
 	LONG params[2] = { 0, 0 };
 
-	if (args = ParseLine(msg->TxtLine, "CLASS/S/A,SUPERCLASS/K/A", params, &srcargs))
+	if ((args = ParseLine(msg->TxtLine, "CLASS/S/A,SUPERCLASS/K/A", params, &srcargs)) != NULL)
 	{
 		if (StrLen((CONST_STRPTR)params[1]) <= MAXLEN_LIBRARY_NAME)
 		{
@@ -845,7 +845,7 @@ IPTR ClassEditorOpenMethodEditor(Class *cl, Object *obj, struct CEDP_OpenMethodE
 {
 	struct ClassEditorData *d = INST_DATA(cl, obj);
 
-	if (d->Objects.WndMethodEditor = NewObjectM(MethodEditorClass->mcc_Class, NULL, TAG_END))
+	if ((d->Objects.WndMethodEditor = NewObjectM(MethodEditorClass->mcc_Class, NULL, TAG_END)) != NULL)
 	{
 		struct MethodEntry *me;
 
@@ -856,7 +856,7 @@ IPTR ClassEditorOpenMethodEditor(Class *cl, Object *obj, struct CEDP_OpenMethodE
 
 			me2.me_Name = LS(MSG_METHODEDITOR_NEW_METHOD, "new method");
 			me2.me_Id = 0;
-			me2.me_Message = "";
+			me2.me_Message = (STRPTR)"";
 			me2.me_ArgCount = 0;
 
 			for (i = 0; i < MAX_ARGS_IN_METHOD; i++)
