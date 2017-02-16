@@ -36,6 +36,12 @@ struct IntuitionIFace 	*IIntuition = NULL;
 struct MUIMasterIFace	*IMUIMaster	= NULL;
 struct LocaleIFace   	*ILocale = NULL;
 struct IconIFace        *IIcon = NULL;
+#elif defined(__MORPHOS__)
+struct Library *UtilityBase;
+struct IntuitionBase *IntuitionBase;
+struct Library *MUIMasterBase;
+struct Library *LocaleBase;
+struct Library *IconBase;
 #else
 struct UtilityBase *UtilityBase;
 struct IntuitionBase *IntuitionBase;
