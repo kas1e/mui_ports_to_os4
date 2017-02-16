@@ -168,7 +168,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include -Ilua-5.1.5/src $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/$(BINDIR) -lvstring -lm
+LDLIBS   = -Llibvstring/$(BINDIR) -lvstring
 
 ###########################################################################
 # object files definition
@@ -228,7 +228,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -mcrt=clib2 -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
-  LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui
+  LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui -lm
 
   OBJS     += amigaos3_system.o
   OBJS     += vastubs.o
