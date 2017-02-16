@@ -19,6 +19,7 @@ struct MUI_CustomClass *MethodEditorClass;
 
 DISPATCHERPROTO(MethodEditorDispatcher);
 
+#if 0
 static CONST_STRPTR TypicalTypes[] = {
 	"VOID",
 	"LONG",
@@ -36,6 +37,7 @@ static CONST_STRPTR TypicalTypes[] = {
 	"struct TagItem*",
 	NULL
 };
+#endif
 
 
 struct MEObjs
@@ -235,7 +237,7 @@ IPTR MethodEditorSet(Class *cl, Object *obj, struct opSet *msg)
 
 	tagptr = msg->ops_AttrList;
 
-	while (tag = NextTagItem(&tagptr))
+	while ((tag = NextTagItem(&tagptr)) != NULL)
 	{
 		switch (tag->ti_Tag)
 		{
@@ -260,7 +262,7 @@ IPTR MethodEditorSet(Class *cl, Object *obj, struct opSet *msg)
 
 IPTR MethodEditorGet(Class *cl, Object *obj, struct opGet *msg)
 {
-	struct MethodEditorData *d = INST_DATA(cl, obj);
+//	struct MethodEditorData *d = INST_DATA(cl, obj);
 	IPTR result = TRUE;
 
 	switch (msg->opg_AttrID)
@@ -324,9 +326,9 @@ IPTR MethodEditorUpdateEntry(Class *cl, Object *obj, struct MEDP_UpdateEntry *ms
 	struct MethodEntry *me = msg->Entry;
 	STRPTR new_name, new_message;
 
-	if (new_name = StrNew((CONST_STRPTR)XGet(d->Objects.StrMethodName, MUIA_String_Contents)))
+	if ((new_name = StrNew((CONST_STRPTR)XGet(d->Objects.StrMethodName, MUIA_String_Contents))) != NULL)
 	{
-		if (new_message = StrNew((CONST_STRPTR)XGet(d->Objects.StrMethodStruct, MUIA_String_Contents)))
+		if ((new_message = StrNew((CONST_STRPTR)XGet(d->Objects.StrMethodStruct, MUIA_String_Contents))) != NULL)
 		{
 			if (me->me_Name) StrFree(me->me_Name);
 			me->me_Name = new_name;
