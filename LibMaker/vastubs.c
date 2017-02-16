@@ -26,10 +26,13 @@ APTR NewObject( struct IClass *classPtr, CONST_STRPTR classID, Tag tag1, ... )
 { return NewObjectA(classPtr, classID, (struct TagItem *)&tag1); }
 
 #include <proto/dos.h>
+#undef FPrintf
 LONG FPrintf( BPTR fh, CONST_STRPTR format, ... )
 { return VFPrintf(fh, format, (CONST APTR)(&format+1)); }
+#undef Printf
 LONG Printf( CONST_STRPTR format, ... )
 { return VPrintf(format, (CONST APTR)(&format+1)); }
+#undef AllocDosObjectTags
 APTR AllocDosObjectTags( ULONG type, Tag tag1, ...)
 { return AllocDosObject(type, (struct TagItem *)&tag1); }
 
