@@ -6,3 +6,4 @@ gitrev.h
 LibMaker
 Makefile.dep
 lua-*.tgz
+lua-*.tar.gz
