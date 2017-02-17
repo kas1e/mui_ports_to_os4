@@ -87,7 +87,10 @@ MKDIR   = makedir
 CHMOD   = protect FLAGS=rwed
 SED     = sed
 CP      = copy
+FLEXCAT = flexcat
 CC      = gcc
+AR      = ar
+RANLIB  = ranlib
 STRIP   = strip
 OBJDUMP = objdump
 
@@ -149,12 +152,12 @@ endif
 # none - because we want to compile with -Wall all the time
 
 # Common Directories
-PREFIX   = $(CDTHIS)
-OBJDIR   = .obj_$(OS)
-BINDIR   = bin_$(OS)
-VPATH    = $(OBJDIR)
-DEPFILE  = Makefile.dep
-DESTDIR  = MUI:Libs/MUI
+PREFIX    = $(CDTHIS)
+OBJDIR    = .obj_$(OS)
+BINDIR    = bin_$(OS)
+VPATH     = $(OBJDIR)
+DEPFILE   = Makefile.dep
+LOCALEDIR = locale
 
 # target definition
 TARGET    = $(BINDIR)/ChocolateCastle
@@ -315,7 +318,7 @@ endif
 .PHONY: all
 ifeq ($(wildcard $(DEPFILE)),$(DEPFILE))
 # great, we have a dependecies file, let's make our target
-all: $(BINDIR) $(OBJDIR) $(TARGET)
+all: $(BINDIR) $(OBJDIR) $(TARGET) $(CATALOGS)
 else
 # no dependecies, create it and then call make again
 all: depend
@@ -365,27 +368,29 @@ $(TARGET): libvstring/$(BINDIR)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@"
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
+CATALOGS = $(patsubst %.ct,%.catalog,$(wildcard $(LOCALEDIR)/*.ct))
+
 .PHONY: dump
 dump:
 	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET) > $(TARGET).dump
 
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug
-	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS))
+	-$(RM) $(TARGET) $(TARGET).debug $(addprefix $(OBJDIR)/,$(OBJS)) $(CATALOGS)
 	@$(MAKE) -C libvstring clean
+
+.PHONY: catalogs
+catalogs: $(CATALOGS)
+
+$(LOCALEDIR)/%.catalog: $(LOCALEDIR)/%.ct
+	@echo "  FC    $<"
+	@$(FLEXCAT) $(LOCALEDIR)/ChocolateCastle.cd $< catalog $@
 
 .PHONY: distclean
 distclean: clean
 	-$(RMDIR) $(OBJDIR)
 	-$(RMDIR) $(BINDIR)
 	@$(MAKE) -C libvstring distclean
-
-# install
-.PHONY: install
-install: all
-	@echo "  IN $(TARGET)"
-	@$(CP) $(TARGET) $(DESTDIR)
 
 .PHONY: help
 help:
@@ -396,9 +401,6 @@ help:
 	@echo "Other generic targets:"
 	@echo "  all      - Build $(TARGET)"
 	@echo "  catalogs - Build all available catalogs"
-	@echo ""
-	@echo "Install targets:"
-	@echo "  install  - Install $(TARGET) into $(DESTDIR)"
 	@echo ""
 	@echo "Parameters:"
 	@echo "  make OS=os3|os4|mos|aros-i386|aros-i686|aros-ppc|aros-x86_64"
