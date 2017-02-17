@@ -1,0 +1,387 @@
+## version $VER: ChocolateCastle.catalog 0.8 (22.8.2016)
+## codeset 0
+## language deutsch
+;
+MSG_ERROR_REQUESTER_OK_BUTTON
+*_OK
+; *_OK
+;
+MSG_INFO_REQUESTER_OK_BUTTON
+*_OK
+; *_OK
+;
+MSG_MAIN_WINDOW_TITLE
+ChocolateCastle - Projekttypauswahl
+; ChocolateCastle - Project Type Selection
+;
+MSG_PROJECT_SELECTOR_BUTTON_MUI_CLASS
+MUI-Klasse
+; MUI Class
+;
+MSG_PROJECT_SELECTOR_BUTTON_REGGAE_CLASS
+Reggae-Klasse
+; Reggae Class
+;
+MSG_APPLICATION_DESCRIPTION
+Quellcode Template-Generator
+; Code template generator
+;
+MSG_EDITOR_BUTTON_ADD
+Hinzufügen
+; Add
+;
+MSG_EDITOR_BUTTON_ADD_HOTKEY
+h
+; a
+;
+MSG_EDITOR_BUTTON_EDIT
+Bearbeiten
+; Edit
+;
+MSG_EDITOR_BUTTON_EDIT_HOTKEY
+e
+; e
+;
+MSG_EDITOR_BUTTON_DELETE
+Löschen
+; Delete
+;
+MSG_EDITOR_BUTTON_DELETE_HOTKEY
+ö
+; d
+;
+MSG_EDITOR_BUTTON_OK_HOTKEY
+o
+; o
+;
+MSG_EDITOR_BUTTON_OK
+OK
+; OK
+;
+MSG_PROJECT_SOURCE_DIR_LABEL
+Quellcode-Verzeichnis:
+; Source Drawer:
+;
+MSG_PROJECT_SOURCE_DIR_REQUEST_TITLE
+Verzeichnis für den Quellcode wählen
+; Select Source Drawer
+;
+MSG_PROJECT_MODULE_NAME_LABEL
+Modulname:
+; Module Name:
+;
+MSG_PROJECT_TODO_REMARKS_GROUP_TITLE
+TODO-Bemerkungen
+; TODO Remarks
+;
+MSG_PROJECT_GENERATE_BUTTON
+Erzeugen
+; Generate
+;
+MSG_PROJECT_GENERATE_BUTTON_HOTKEY
+g
+; g
+;
+MSG_PROJECT_SAVE_BUTTON
+Speichern
+; Save
+;
+MSG_PROJECT_SAVE_BUTTON_HOTKEY
+s
+; s
+;
+MSG_PROJECT_LOAD_BUTTON
+Laden
+; Load
+;
+MSG_PROJECT_LOAD_BUTTON_HOTKEY
+l
+; l
+;
+MSG_PROJECT_SAVE_REQUESTER_TITLE
+Projekt speichern
+; Save Project
+;
+MSG_PROJECT_SAVE_REQUESTER_BUTTON
+Speichern
+; Save
+;
+MSG_PROJECT_SAVE_OPEN_ERROR
+Kann Datei nicht öffnen \"%s\", DOS-Fehler %ld.
+; Can't open file \"%s\", DOS error %ld.
+;
+MSG_PROJECT_SAVE_DIRLOCK_ERROR
+Problem mit Verzeichnis \"%s\", DOS-Fehler %ld.
+; Problem with directory \"%s\", DOS error %ld.
+;
+MSG_PROJECT_INFO_PROJECT_SAVED
+Projektbeschreibung wurde in \"%s\" gespeichert.
+; Project description has been saved in \"%s\".
+;
+MSG_PROJECT_LOAD_REQUESTER_TITLE
+Projekt laden
+; Load Project
+;
+MSG_PROJECT_LOAD_REQUESTER_BUTTON
+Laden
+; Load
+;
+MSG_PROJECT_LOAD_OPEN_ERROR
+Kann Datei nicht öffnen \"%s\", DOS-Fehler %ld.
+; Can't open file \"%s\", DOS error %ld.
+;
+MSG_PROJECT_LOAD_DIRLOCK_ERROR
+Problem mit Verzeichnis \"%s\", DOS-Fehler %ld.
+; Problem with directory \"%s\", DOS error %ld.
+;
+MSG_PROJECT_INFO_CODE_GENERATED
+Code wurde in \"%s\" erzeugt.
+; Code has been generated to \"%s\".
+;
+MSG_METHOD_EDITOR_METHOD_NAME_LABEL
+Methodenname:
+; Method Name:
+;
+MSG_METHOD_EDITOR_METHOD_FUNCTION_LABEL
+Funktionsname:
+; Function Name:
+;
+MSG_METHOD_EDITOR_METHOD_STRUCTURE_LABEL
+Message-strukturtyp:
+; Message Structure Type:
+;
+MSG_METHOD_EDITOR_METHOD_IDENTIFIER_LABEL
+Methodenbezeichner:
+; Method Identifier:
+;
+MSG_METHOD_EDITOR_ERROR_MISSING_NAME
+Der Name für diese Methode fehlt.
+; Missing name for this method.
+;
+MSG_METHOD_EDITOR_ERROR_NAME_DIGIT
+Der Methodenname kann nicht von einer Ziffer beginnen.
+; Method name can't start from a digit.
+;
+MSG_METHOD_EDITOR_ERROR_MISSING_FUNCTION
+Methode %s() hat keinen Funktionsnamen.
+; Method %s() has no function name.
+;
+MSG_METHOD_EDITOR_ERROR_FUNCTION_DIGIT
+Der Funktionsname für Methode %s() darf nicht von einer Ziffer beginnen.
+; Function name for method %s() can't start from a digit.
+;
+MSG_METHOD_EDITOR_ERROR_STRUCTURE_DIGIT
+Der Strukturname für Methode %s() darf nicht von einer Ziffer beginnen.
+; Structure name for method %s() can't start from a digit.
+;
+MSG_METHOD_EDITOR_ERROR_MISSING_IDENTIFIER
+Methode %s() hat keine Bezeichnung.
+; Method %s() has no identifier value.
+;
+MSG_METHOD_EDITOR_WINDOW_TITLE_NEW_METHOD
+neue Methode
+; new method
+;
+MSG_METHOD_LIST_HEADER_NAME
+Methodenname
+; Method Name
+;
+MSG_METHOD_LIST_HEADER_IDENTIFIER
+Bezeichner
+; Identifier
+;
+MSG_METHOD_LIST_HEADER_FUNCTION
+Funktion
+; Function
+;
+MSG_METHOD_LIST_HEADER_STRUCTURE
+Nachrichtenstruktur
+; Message Structure
+;
+MSG_MUI_GENERATOR_SUPERCLASS_LABEL
+Superklasse
+; Superclass
+;
+MSG_MUI_GENERATOR_SUPERCLASS_PTRNAME_LABEL
+Zeigername:
+; Pointer Name:
+;
+MSG_MUI_GENERATOR_SUPERCLASS_CNAME_LABEL
+Superklassenname:
+; Superclass Name:
+;
+MSG_MUI_GENERATOR_METHODS_FRAME_TITLE
+Methoden
+; Methods
+;
+MSG_MUI_GENERATOR_WINDOW_TITLE
+MUI Custom Class
+; MUI Custom Class
+;
+MSG_REGGAE_EDITOR_METHODS_FRAME_TITLE
+Methoden
+; Methods
+;
+MSG_REGGAE_GENERATOR_WINDOW_TITLE
+Reggae-Klasse
+; Reggae Custom Class
+;
+MSG_ERROR_REQUESTER_UNEXPECTED_EOF
+Unerwartetes Dateiende in Zeile %lu.
+; Unexpected end of file in line %lu.
+;
+MSG_ERROR_REQUESTER_SYNTAX_ERROR
+Syntaxfehler in Zeile %lu.
+; Syntax error in line %lu.
+;
+MSG_TODO_REMARKS_RADIO_WARNINGS
+Bemerkungen als Compiler-Warnungen
+; remarks as compiler warnings
+;
+MSG_TODO_REMARKS_RADIO_COMMENTS
+Bemerkungen als einfache Kommentare
+; remarks as plain comments
+;
+MSG_SUPERCLASS_RADIO_PRIVATE
+private Superklasse
+; private superclass
+;
+MSG_SUPERCLASS_RADIO_PUBLIC
+öffentliche Superklasse
+; public superclass
+;
+MSG_BUTTON_REGGAE_CLASS_HOTKEY
+r
+; r
+;
+MSG_BUTTON_MUI_CLASS_HOTKEY
+m
+; m
+;
+MSG_REGGAE_GENERATOR_EXTERNAL_CLASS
+Erzeuge externe Klasse (Shared Library).
+; Generate external class (shared library).
+;
+MSG_GENERATE_ERROR_NO_MODULE_NAME
+Der Modulname fehlt.
+; Module name is missing.
+;
+MSG_GENERATE_ERROR_MODULE_NAME_DIGIT
+Der Modulname darf nicht von einer Ziffer beginnen.
+; Module name can't start from a digit.
+;
+MSG_GENERATOR_AUTODOC_CHECKMARK_LABEL
+Erzeuge Autodoc-Vorlagen.
+; Generate autodoc templates.
+;
+MSG_MODULE_UNNAMED
+unbenannt
+; Unnamed
+;
+MSG_LIBRARY_GROUP_NAME_LABEL
+Name der Funktionsbibliothek:
+; Library Name:
+;
+MSG_LIBRARY_GROUP_VERSION_LABEL
+Version:
+; Version:
+;
+MSG_LIBRARY_GROUP_REVISION_LABEL
+Revision:
+; Revision:
+;
+MSG_LIBRARY_GROUP_COPYRIGHT_LABEL
+Urhebervermerk:
+; Copyright String:
+;
+MSG_REGGAE_GENERATOR_CLASS_TYPE_LABEL
+Klassenart:
+; Class Type:
+;
+MSG_REGGAE_CLASS_TYPE_STREAM
+Datenstrom
+; stream
+;
+MSG_REGGAE_CLASS_TYPE_DEMUXER
+Demultiplexer
+; demultiplexer
+;
+MSG_REGGAE_CLASS_TYPE_DECODER
+Decoder
+; decoder
+;
+MSG_REGGAE_CLASS_TYPE_FILTER
+Filter
+; filter
+;
+MSG_REGGAE_CLASS_TYPE_ENCODER
+Encoder
+; encoder
+;
+MSG_REGGAE_CLASS_TYPE_MULTIPLEXER
+Multiplexer
+; multiplexer
+;
+MSG_REGGAE_CLASS_TYPE_OUTPUT
+Ausgabe
+; output
+;
+MSG_REGGAE_CLASS_TYPE_NO_TYPE
+ohne Typ
+; no type
+;
+MSG_PROJECT_SOURCE_DIR_HELP
+Pfad zu einem Verzeichnis, in dem die erzeugten Dateien gespeichert werden. Ein Unterverzeichnis \ebwird \
+nicht\en erstellt.
+; Path to a drawer where generated files will be stored. A subdirectory \33bwill \
+; not\33n be created.
+;
+MSG_PROJECT_MODULE_NAME_HELP
+Dieser Name wird in Funktions- oder Methodennamen, Klassenzeigern oder Basisnamen verwendet \
+und nach Kleinschreibung, in Dateinamen.
+; This name is used in functions or methods names, class pointer or library base \
+; name and, after lowercasing, in file names.
+;
+MSG_GENERATOR_AUTODOC_CHECKMARK_HELP
+Erzeugt eine teilweise gefüllte Autodoc-Vorlage für jede Bibliotheksfunktion bzw. \
+Klassenmethode.
+; Generates partially filled autodoc template for every library function or \
+; class method.
+;
+MSG_PROJECT_TODO_REMARKS_HELP
+ChocolateCastle fügt Bemerkungen an die Codestellen, die manuell vervollständigt werden \
+müssen. Diese Bemerkungen können einfach nur Kommentare oder Compiler-Warnungen, \
+erzeugt mit der #warning-Präprozessoranweisung, sein. Die später während der Kompilierung \
+ausgedruckt werden.
+; ChocolateCastle inserts remarks in places of code, which must be completed \
+; manually. These remarks may be just plain comments, or compiler warnings \
+; generated with #warning preprocessor command. The later will be printed out \
+; during compilation.
+;
+MSG_REGGAE_GENERATOR_EXTERNAL_CLASS_HELP
+Erzeugt eine öffentliche Reggae-Klasse als Shared Library. Das Komplette Gerüst wird \
+erzeugt, einschließlich Klassendeskriptor und Make-Datei. Wenn die Option deaktiviert ist, wird \
+eine statische private Klasse erzeugt.
+; Generates public Reggae class as a shared library. Complete skeleton is \
+; generated, including class descriptor and makefile. When unchecked, statically \
+; linked private class is generated.
+;
+MSG_LIBRARY_GROUP_NAME_HELP
+Dieser Name wird als Name der ausführbaren Bibliotheksdatei und zur Bibliotheksbezeichung \
+im System verwendet.
+; This name is used as a name of library executable file and library \
+; identificator in the system.
+;
+MSG_LIBRARY_GROUP_VERSION_HELP
+Hauptteil der Versionsnummer der Funktionsbibliothek.
+; Major part of library version number.
+;
+MSG_LIBRARY_GROUP_COPYRIGHT_HELP
+Der letzte Teil des Bibliotheksbezeichners wird gewöhnlich für den Urhebervermerk benutzt.
+; The last part of library identification string. Used for copyright notice \
+; usually.
+;
+MSG_LIBRARY_GROUP_REVISION_HELP
+Nebenteil der Versionsnummer der Funktionsbibliothek (bitte beachten, dies ist kein Dezimalbruch).
+; Minor part of library version number (note that it is not a decimal fraction).
+;

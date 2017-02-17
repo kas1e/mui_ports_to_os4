@@ -2,5 +2,6 @@
 *.o
 *.debug
 *.map
+*.catalog
 ChocolateCastle
 Makefile.dep
