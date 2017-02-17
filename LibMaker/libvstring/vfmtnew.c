@@ -7,6 +7,10 @@
 #include <exec/rawfmt.h>
 #endif
 
+#if !defined(va_copy) && defined(__va_copy)
+	#define va_copy __va_copy
+#endif
+
 STRPTR VFmtNew(CONST_STRPTR fmt, va_list args)
 {
 	ULONG l = 0;
