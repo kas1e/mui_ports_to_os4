@@ -288,7 +288,7 @@ IPTR MethodEditorSetup(Class *cl, Object *obj, struct MEDP_Setup *msg)
 
 	/* Setting up new window title, based on library name and method name. */
 
-	FmtNPut(d->WinTitle, "LibMaker: %s/%s()", 144, msg->LibName, me->me_Name);
+	FmtNPut(d->WinTitle, "LibMaker: %s/%s()", 144, msg->LibName, me->name);
 	XSet(obj, MUIA_Window_Title, d->WinTitle);
 
 	/* Notification on MethodEditor window close, window is closed, data are not stored. Note  */
@@ -307,9 +307,9 @@ IPTR MethodEditorSetup(Class *cl, Object *obj, struct MEDP_Setup *msg)
 
 	/* Set contents of gadgets. */
 
-	XSet(d->Objects.StrMethodName, MUIA_String_Contents, me->me_Name);
-	XSet(d->Objects.StrMethodStruct, MUIA_String_Contents, me->me_Message);
-	FmtNPut(hexbuf, "%08lX", 9, me->me_Id);
+	XSet(d->Objects.StrMethodName, MUIA_String_Contents, me->name);
+	XSet(d->Objects.StrMethodStruct, MUIA_String_Contents, me->message);
+	FmtNPut(hexbuf, "%08lX", 9, me->id);
 	XSet(d->Objects.StrMethodId, MUIA_String_Contents, hexbuf);
 	return 0;
 }
@@ -330,11 +330,11 @@ IPTR MethodEditorUpdateEntry(Class *cl, Object *obj, struct MEDP_UpdateEntry *ms
 	{
 		if ((new_message = StrNew((CONST_STRPTR)XGet(d->Objects.StrMethodStruct, MUIA_String_Contents))) != NULL)
 		{
-			if (me->me_Name) StrFree(me->me_Name);
-			me->me_Name = new_name;
-			if (me->me_Message) StrFree(me->me_Message);
-			me->me_Message = new_message;
-			me->me_Id = HexStrToULong((CONST_STRPTR)XGet(d->Objects.StrMethodId, MUIA_String_Contents));
+			if (me->name) StrFree(me->name);
+			me->name = new_name;
+			if (me->message) StrFree(me->message);
+			me->message = new_message;
+			me->id = HexStrToULong((CONST_STRPTR)XGet(d->Objects.StrMethodId, MUIA_String_Contents));
 			return 0;
 		}
 

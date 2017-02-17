@@ -11,15 +11,15 @@ void DeleteMethodListClass(void);
 
 struct MethodArg
 {
-	STRPTR ma_Type;
-	STRPTR ma_Name;
+	STRPTR type;
+	STRPTR name;
 };
 
 struct MethodEntry
 {
-	STRPTR me_Name;
-	STRPTR me_Message;
-	IPTR me_Id;
-	IPTR me_ArgCount;
-	struct MethodArg me_Args[MAX_ARGS_IN_METHOD];
+	STRPTR name;
+	STRPTR message;
+	IPTR id;
+	IPTR argCount;
+	struct MethodArg args[MAX_ARGS_IN_METHOD];
 };
