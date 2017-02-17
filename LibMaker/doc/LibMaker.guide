@@ -1,0 +1,118 @@
+@DATABASE LibMaker.guide
+@$VER: LibMaker.guide 0.11 (17.10.2014)
+@AUTHOR Grzegorz Kraszewski
+@WORDWRAP
+
+@NODE MAIN "LibMaker"
+
+@{JCENTER}@{B}L i b M a k e r   0 . 1 1@{UB}
+
+@{B}User's Manual@{UB}
+@{JLEFT}
+
+@{"Introduction" LINK INTRODUCTION}
+@{"Project Management" LINK PROJECT}
+@{"Description of Generated Files" LINK DESCR}
+@{"Author" LINK AUTHOR}
+@{"BSD License" LINK LICENSE}
+@ENDNODE
+@NODE INTRODUCTION "LibMaker - Introduction"
+@{B}Introduction@{UB}
+
+LibMaker is a tool for generating code skeletons for system components of MorphOS and AmigaOS. In the current version following components are supported:
+
+     * shared libraries
+
+A component API can be defined using the GUI. Then the program sends all the information from GUI to a Lua script, which generates some files driectly and some files by processing templates using placeholders. The Lua code generator and template files may be edited by advanced users. Format of informations sent from GUI is documented in comments in the Lua code. API definitions (projects) may be saved and later reused. Projects are stored in human readable text files.
+
+LibMaker features an extensive bubble help system. Every gadget has such a help text, which is usually displayed after keeping the mouse pointer over a gadget for a few seconds (it depends on MUI settings). Please use it, as informations given there are not repeated in this manual.
+
+It is assumed that user of this program has some experience in programming on MorphOS or AmigaOS. Creating shared libraries and other system components requires knowledge, which cannot be substituted by program foolproofness. While most of entered data undergo basic validation, it is possible to generate not compilable code by entering random or intentionally malformed data. Following bubble help advices is recommended.
+
+@ENDNODE
+@NODE PROJECT "LibMaker - Project Management"
+@{B}Project Management@{UB}
+
+A LibMaker project may be saved to a file for later use. Saving is done with "Save" and "Save As" items of the "Project" menu. The project is saved as a human readable, self explaining text file. Because of parser limitation all "*" in text strings are replaced with "^" character. A project can be later loaded with "Open" menu item.
+
+LibMaker allows for incremental work on a project. For this, each function (and method if the component has methods) should be generated to a separate file. When LibMaker generates code into an existing project it does not overwrite existing functions and methods files, so their implementation code is preserved.
+
+NOTE: If user customizes InitResources() and FreeResources() functions in the "library.c" file or MyLibBase definition in "library.h", they will be overwritten. It will be fixed in future versions of LibMaker.
+@ENDNODE
+@NODE DESCR "LibMaker - Description of Generated Files"
+@{B}Description of Generated Files@{UB}
+
+
+@{B}MorphOS@{UB}
+
+@{I}dummy.c@{UI} - contains a dummy function linked at start of the library to protect against executing it as a program. It also contains the version string array, forced to be in the code section, so it appears in the first few bytes of the binary file. Then version tools can find the string faster.
+
+@{I}library.c@{UI} - contains the main part of the library skeleton: Resident structure, function jumptable, library initialization code and standard Open, Close, Expunge and Reserved vectors. It also contains all the library functions if they are not generated into separate files.
+
+@{I}library.h@{UI} - contains definition of the library base.
+
+@{I}lib_version.h@{UI} - contains definitions of library version, date, copyrithg note and version string.
+
+@{I}makefile@{UI} - makefile for the project.
+
+function code files - prefixed with "f_", are generated if corresponding option is switched on in the GUI.
+
+@{I}os-include/clib/<library>_protos.h@{UI} - a standard header file with C function prototypes for the library.
+
+@{I}os-include/fd/<library>_lib.fd@{UI} - a standard library definition file needed for generation of inlines.
+
+@{I}os_include/libraries/<library>.h@{UI} - an empty file, where declarations of library public structures and constants should be placed. Note that it can be placed in a different directory, if specified in the GUI.
+
+NOTES
+
+1. The current version of LibMaker does not generate proto and inline file for a library. They have to be generated using a tool from the MorphOS SDK.
+2. The library generated uses native SystemV style ABI, so the library is not callable from M68k code.
+
+
+@{B}AmigaOS 3@{UB}
+
+@{I}dummy.c@{UI} - contains a dummy function linked at start of the library to protect against executing it as a program. It also contains the version string array.
+
+@{I}library.c@{UI} - contains the main part of the library skeleton: Resident structure, function jumptable, library initialization code and standard Open, Close, Expunge and Reserved vectors. It also contains all the library functions if they are not generated into separate files.
+
+@{I}library.h@{UI} - contains definition of the library base.
+
+@{I}lib_version.h@{UI} - contains definitions of library version, date, copyrithg note and version string.
+
+@{I}makefile@{UI} - makefile for the project.
+
+function code files - prefixed with "f_", are generated if corresponding option is switched on in the GUI.
+
+@{I}os-include/clib/<library>_protos.h@{UI} - a standard header file with C function prototypes for the library.
+
+@{I}os-include/fd/<library>_lib.fd@{UI} - a standard library definition file needed for generation of inlines.
+
+@{I}os_include/libraries/<library>.h@{UI} - an empty file, where declarations of library public structures and constants should be placed. Note that it can be placed in a different directory, if specified in the GUI.
+
+@{I}os-include/inline/<library>.h@{UI} - a standard GCC inline file for library functions.
+
+@{I}os-include/proto/<library>.h@{UI} - a standard proto header, used as the main include file for a library.
+
+
+@ENDNODE
+@NODE AUTHOR "LibMaker - Author"
+@{B}Author@{UB}
+
+Grzegorz Kraszewski
+<krashan@teleinfo.pb.edu.pl>
+http://krashan.ppa.pl
+#morphos on irc.freenode.net
+@ENDNODE
+@NODE LICENSE "LibMaker - License"
+@{B}License@{UB}
+
+Copyright (c) 2014, Grzegorz Kraszewski
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+This software is provided by Grzegorz Kraszewski "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall Grzegorz Kraszewski be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+@ENDNODE

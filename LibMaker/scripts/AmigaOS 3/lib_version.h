@@ -1,0 +1,17 @@
+/*
+   ${LIBNAME} version header file.
+   Generated with ${GENERATOR}.
+*/
+
+#ifndef ${DEFINENAME}_LIB_VERSION_H
+#define ${DEFINENAME}_LIB_VERSION_H
+
+#define LIBNAME "${LIBNAME}"
+#define VERSION ${LIBVERSION}
+#define REVISION ${LIBREVISION}
+#define DATE "${LIBDATE}"
+#define VERS "${LIBNAME} ${LIBVERSION}.${LIBREVISION}"
+#define VSTRING "${LIBNAME} ${LIBVERSION}.${LIBREVISION} (${LIBDATE}) ${LIBCOPYRIGHT}"
+#define VERSTAG "\0$VER: " VSTRING
+
+#endif      /* ${DEFINENAME}_LIB_VERSION_H */
