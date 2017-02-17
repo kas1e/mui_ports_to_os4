@@ -605,7 +605,7 @@ IPTR ClassEditorWriteClassSpec(Class *cl, Object *obj, struct CEDP_WriteClassSpe
 	{
 		DoMethod(d->Objects.LstMethods, MUIM_List_GetEntry, i, (IPTR)&me);
 		if (!me) break;
-		FPrintf(msg->File, "METHOD NAME=\"%s\" ID=\"%08lx\" MESSAGE=\"%s\"\n", (IPTR)me->me_Name, me->me_Id, (IPTR)me->me_Message);
+		FPrintf(msg->File, "METHOD NAME=\"%s\" ID=\"%08lx\" MESSAGE=\"%s\"\n", (IPTR)me->name, me->id, (IPTR)me->message);
 
 		/* method arguments here */
 
@@ -641,10 +641,10 @@ static void ReadMethodContents(UNUSED Object *obj, UNUSED struct ClassEditorData
 
 	/* clear unused argument fields, for proper freeing */
 
-	for (i = me->me_ArgCount; i < MAX_ARGS_IN_METHOD; i++)
+	for (i = me->argCount; i < MAX_ARGS_IN_METHOD; i++)
 	{
-		me->me_Args[i].ma_Name = NULL;
-		me->me_Args[i].ma_Type = NULL;
+		me->args[i].name = NULL;
+		me->args[i].type = NULL;
 	}
 }
 
@@ -667,10 +667,10 @@ static void ReadMethod(Object *obj, struct ClassEditorData *d, BPTR file, STRPTR
 		{
 			struct MethodEntry me;
 
-			me.me_Name = (STRPTR)params[1];
-			me.me_Message = (STRPTR)params[3];
-			me.me_Id = HexStrToULong((CONST_STRPTR)params[2]);
-			me.me_ArgCount = 0;
+			me.name = (STRPTR)params[1];
+			me.message = (STRPTR)params[3];
+			me.id = HexStrToULong((CONST_STRPTR)params[2]);
+			me.argCount = 0;
 			ReadMethodContents(obj, d, file, line, &me);
 			if (!IoErr()) DoMethod(d->Objects.LstMethods, MUIM_List_InsertSingle, (IPTR)&me, MUIV_List_Insert_Bottom);
 		}
@@ -818,11 +818,11 @@ IPTR ClassEditorPushToLua(Class *cl, Object *obj, struct CEDP_PushToLua *msg)
 		if (!me) break;
 		LuaPushInteger(msg->L, i + 1);
 		LuaNewTable(msg->L);
-		LuaPushString(msg->L, me->me_Name);
+		LuaPushString(msg->L, me->name);
 		LuaSetField(msg->L, -2, "name");
-		LuaPushString(msg->L, me->me_Message);
+		LuaPushString(msg->L, me->message);
 		LuaSetField(msg->L, -2, "message");
-		FmtNPut(hexbuf, "%08lX", 9, me->me_Id);
+		FmtNPut(hexbuf, "%08lX", 9, me->id);
 		LuaPushLString(msg->L, hexbuf, 8);
 		LuaSetField(msg->L, -2, "id");
 		LuaSetTable(msg->L, -3);
@@ -854,15 +854,15 @@ IPTR ClassEditorOpenMethodEditor(Class *cl, Object *obj, struct CEDP_OpenMethodE
 			struct MethodEntry me2;
 			BYTE i;
 
-			me2.me_Name = (STRPTR)LS(MSG_METHODEDITOR_NEW_METHOD, "new method");
-			me2.me_Id = 0;
-			me2.me_Message = (STRPTR)"";
-			me2.me_ArgCount = 0;
+			me2.name = (STRPTR)LS(MSG_METHODEDITOR_NEW_METHOD, "new method");
+			me2.id = 0;
+			me2.message = (STRPTR)"";
+			me2.argCount = 0;
 
 			for (i = 0; i < MAX_ARGS_IN_METHOD; i++)
 			{
-				me2.me_Args[i].ma_Name = NULL;
-				me2.me_Args[i].ma_Type = NULL;
+				me2.args[i].name = NULL;
+				me2.args[i].type = NULL;
 			}
 
 			DoMethod(d->Objects.LstMethods, MUIM_List_InsertSingle, (IPTR)&me2, MUIV_List_Insert_Bottom);

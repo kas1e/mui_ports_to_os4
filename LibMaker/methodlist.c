@@ -80,16 +80,16 @@ IPTR MethodListListConstruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_L
 
 	if ((entry = AllocTaskPooled(sizeof(struct MethodEntry))) != NULL)
 	{
-		if ((entry->me_Name = StrNew(input->me_Name)) != NULL)
+		if ((entry->name = StrNew(input->name)) != NULL)
 		{
-			if ((entry->me_Message = StrNew(input->me_Message)) != NULL)
+			if ((entry->message = StrNew(input->message)) != NULL)
 			{
-				entry->me_Id = input->me_Id;
-				entry->me_ArgCount = input->me_ArgCount;
+				entry->id = input->id;
+				entry->argCount = input->argCount;
 				return (IPTR)entry;
 			}
 
-			StrFree(entry->me_Name);
+			StrFree(entry->name);
 		}
 
 		FreeTaskPooled(entry, sizeof(struct MethodEntry));
@@ -109,8 +109,8 @@ IPTR MethodListListDestruct(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_Li
 
 	if (entry)
 	{
-		if (entry->me_Name) StrFree(entry->me_Name);
-		if (entry->me_Message) StrFree(entry->me_Message);
+		if (entry->name) StrFree(entry->name);
+		if (entry->message) StrFree(entry->message);
 		FreeTaskPooled(entry, sizeof(struct MethodEntry));
 	}
 	return 0;
@@ -135,10 +135,10 @@ IPTR MethodListListDisplay(UNUSED Class *cl, UNUSED Object *obj, struct MUIP_Lis
 	}
 	else
 	{
-		FmtNPut(d->IdBuf, "$%08lX", 12, me->me_Id);
-		msg->array[0] = me->me_Name;
+		FmtNPut(d->IdBuf, "$%08lX", 12, me->id);
+		msg->array[0] = me->name;
 		msg->array[1] = d->IdBuf;
-		msg->array[2] = me->me_Message;
+		msg->array[2] = me->message;
 	}
 
 	return 0;
