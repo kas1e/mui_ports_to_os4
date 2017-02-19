@@ -196,9 +196,11 @@ ifeq ($(OS), os4)
 
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS4)
-    CC      = ppc-amigaos-gcc
-    STRIP   = ppc-amigaos-strip
-    OBJDUMP = ppc-amigaos-objdump
+    CC      = m68k-amigaos-gcc
+    AR      = m68k-amigaos-ar
+    RANLIB  = m68k-amigaos-ranlib
+    STRIP   = m68k-amigaos-strip
+    OBJDUMP = m68k-amigaos-objdump
   endif
 
   # Compiler/Linker flags
@@ -225,6 +227,8 @@ ifeq ($(OS), os3)
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS)
     CC      = m68k-amigaos-gcc
+    AR      = m68k-amigaos-ar
+    RANLIB  = m68k-amigaos-ranlib
     STRIP   = m68k-amigaos-strip
     OBJDUMP = m68k-amigaos-objdump
   endif
@@ -249,6 +253,8 @@ ifeq ($(OS), mos)
   # Compiler/link/strip commands
   ifneq ($(HOST), MorphOS)
     CC      = ppc-morphos-gcc
+    AR      = ppc-morphos-ar
+    RANLIB  = ppc-morphos-ranlib
     STRIP   = ppc-morphos-strip
     OBJDUMP = ppc-morphos-objdump
   endif
