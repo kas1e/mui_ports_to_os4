@@ -88,6 +88,8 @@ CHMOD   = protect FLAGS=rwed
 SED     = sed
 CP      = copy
 CC      = gcc
+AR      = ar
+RANLIB  = ranlib
 STRIP   = strip
 OBJDUMP = objdump
 
