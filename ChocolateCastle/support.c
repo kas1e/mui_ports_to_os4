@@ -176,7 +176,11 @@ void syntax_error(Object *obj, struct Parser *p)
 
 BOOL check_pattern(STRPTR line, CONST_STRPTR pattern, struct Parser *parser)
 {
+	#if defined(__MORPHOS)
+	parser->args->RDA_Source.CS_Buffer = (UBYTE *)line;
+	#else
 	parser->args->RDA_Source.CS_Buffer = line;
+	#endif
 	parser->args->RDA_Source.CS_Length = strln(line);
 	parser->args->RDA_Source.CS_CurChr = 0;
 	parser->args->RDA_DAList = 0;
