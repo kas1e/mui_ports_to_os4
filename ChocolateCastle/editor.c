@@ -68,7 +68,7 @@ struct MUI_CustomClass *CreateEditorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_Group, NULL, sizeof(struct EditorData), ENTRY(EditorDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_Group, NULL, sizeof(struct EditorData), ENTRY(EditorDispatcher));
 	EditorClass = cl;
 	return cl;
 }

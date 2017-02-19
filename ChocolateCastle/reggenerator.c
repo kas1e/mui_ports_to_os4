@@ -60,7 +60,7 @@ struct MUI_CustomClass *CreateRegGeneratorClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass,sizeof(struct RegGeneratorData), ENTRY(RegGeneratorDispatcher));
+	cl = MUI_CreateCustomClass(NULL, NULL, GeneratorClass, sizeof(struct RegGeneratorData), ENTRY(RegGeneratorDispatcher));
 	RegGeneratorClass = cl;
 	return cl;
 }

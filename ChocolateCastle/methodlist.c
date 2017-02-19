@@ -34,7 +34,7 @@ struct MUI_CustomClass *CreateMethodListClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct MethodListData), ENTRY(MethodListDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_List, NULL, sizeof(struct MethodListData), ENTRY(MethodListDispatcher));
 	MethodListClass = cl;
 	return cl;
 }

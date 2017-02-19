@@ -29,7 +29,7 @@ struct MUI_CustomClass *CreateCastleAppClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct CastleAppData), ENTRY(CastleAppDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_Application, NULL, sizeof(struct CastleAppData), ENTRY(CastleAppDispatcher));
 	CastleAppClass = cl;
 	return cl;
 }

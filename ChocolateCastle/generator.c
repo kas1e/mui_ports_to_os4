@@ -72,7 +72,7 @@ DISPATCHERPROTO(GeneratorDispatcher);
 struct MUI_CustomClass *CreateGeneratorClass(void)
 {
 	struct MUI_CustomClass *cl;
-	cl = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct GeneratorData), ENTRY(GeneratorDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_Window, NULL, sizeof(struct GeneratorData), ENTRY(GeneratorDispatcher));
 	GeneratorClass = cl;
 	return cl;
 }
