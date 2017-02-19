@@ -176,7 +176,7 @@ void syntax_error(Object *obj, struct Parser *p)
 
 BOOL check_pattern(STRPTR line, CONST_STRPTR pattern, struct Parser *parser)
 {
-	#if defined(__MORPHOS)
+	#if defined(__MORPHOS__)
 	parser->args->RDA_Source.CS_Buffer = (UBYTE *)line;
 	#else
 	parser->args->RDA_Source.CS_Buffer = line;
