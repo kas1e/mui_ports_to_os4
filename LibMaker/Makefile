@@ -166,7 +166,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
 OPTFLAGS = -O3 -fomit-frame-pointer
 DEBUG    = -DDEBUG -O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -Ilibvstring -I../include -Ilua-5.1.5/src $(CPU) $(WARN) $(OPTFLAGS) \
+CFLAGS   = -I. -Ilibvstring -I../include $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -Llibvstring/$(BINDIR) -lvstring
@@ -205,7 +205,7 @@ ifeq ($(OS), os4)
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
+  CFLAGS   += -mcrt=$(CRT) -Ilua-5.1.5/src -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
   LDLIBS   += -L$(LIBDIR) -llua -lauto
@@ -229,7 +229,7 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -mcrt=clib2 -DNO_INLINE_STDARG -D__amigaos3__
+  CFLAGS  += -mcrt=clib2 -Ilua-5.1.5/src -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
   LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui -lm
 
