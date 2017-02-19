@@ -294,7 +294,7 @@ Object* MUI_NewObjectM(const char *classname, ...)
 
 		va_end(args2);
 
-		result = (Object*)MUI_NewObjectA(classname, tags);
+		result = (Object*)MUI_NewObjectA((STRPTR)classname, tags);
 	}
 	return result;
 }
