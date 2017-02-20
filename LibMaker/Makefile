@@ -157,7 +157,7 @@ BINDIR   = bin_$(OS)
 LIBDIR   = lib_$(OS)
 VPATH    = $(OBJDIR)
 DEPFILE  = Makefile.dep
-DESTDIR  = MUI:Libs/MUI
+LUADIR   = lua-5.1.5
 TOOLS    = $(CDUP)/tools
 
 # target definition
@@ -171,7 +171,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/$(BINDIR) -lvstring
+LDLIBS   = -L$(LIBDIR) -lvstring
 
 ###########################################################################
 # object files definition
@@ -196,11 +196,11 @@ ifeq ($(OS), os4)
 
   # Compiler/link/strip commands
   ifneq ($(HOST), AmigaOS4)
-    CC      = m68k-amigaos-gcc
-    AR      = m68k-amigaos-ar
-    RANLIB  = m68k-amigaos-ranlib
-    STRIP   = m68k-amigaos-strip
-    OBJDUMP = m68k-amigaos-objdump
+    CC      = ppc-amigaos-gcc
+    AR      = ppc-amigaos-ar
+    RANLIB  = ppc-amigaos-ranlib
+    STRIP   = ppc-amigaos-strip
+    OBJDUMP = ppc-amigaos-objdump
   endif
 
   # Compiler/Linker flags
@@ -209,7 +209,7 @@ ifeq ($(OS), os4)
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-  CFLAGS   += -mcrt=$(CRT) -Ilua-5.1.5/src -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
+  CFLAGS   += -mcrt=$(CRT) -I$(LUADIR)/src -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
   LDLIBS   += -L$(LIBDIR) -llua -lauto
@@ -235,7 +235,7 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -mcrt=clib2 -Ilua-5.1.5/src -DNO_INLINE_STDARG -D__amigaos3__
+  CFLAGS  += -mcrt=clib2 -I$(LUADIR)/src -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
   LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui -lm
 
@@ -330,7 +330,7 @@ endif
 .PHONY: all
 ifeq ($(wildcard $(DEPFILE)),$(DEPFILE))
 # great, we have a dependecies file, let's make our target
-all: $(BINDIR) $(OBJDIR) $(TARGET)
+all: $(BINDIR) $(OBJDIR) $(LIBDIR) $(TARGET)
 else
 # no dependecies, create it and then call make again
 all: depend
@@ -368,13 +368,18 @@ $(BINDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(BINDIR)
 
+# make the library directories
+$(LIBDIR):
+	@echo "  MK $@"
+	@$(MKDIR) $(LIBDIR)
+
 # for compiling single .c files
 $(OBJDIR)/%.o: %.c
 	@echo "  CC $<"
 	@$(CC) $(CFLAGS) $< -o $@
 
 # for linking the target
-$(TARGET): libvstring/bin_$(OS)/libvstring.a $(LIBLUA) $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): $(LIBDIR)/libvstring.a $(LIBLUA) $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -386,12 +391,12 @@ dump:
 
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug
-	-$(RM) $(addprefix $(OBJDIR)/,$(OBJS)) gitrev.h
+	-$(RM) $(TARGET) $(TARGET).debug $(addprefix $(OBJDIR)/,$(OBJS)) gitrev.h $(LIBDIR)/*.a
 	@$(MAKE) -C libvstring clean
 
 .PHONY: distclean
 distclean: clean
+	-$(RMDIR) $(LIBDIR)
 	-$(RMDIR) $(OBJDIR)
 	-$(RMDIR) $(BINDIR)
 	@$(MAKE) -C libvstring distclean
@@ -433,14 +438,15 @@ $(OBJDIR)/application.o: CFLAGS += $(BUILDID)
 
 ## LIBVSTRING #########################
 
-libvstring/$(BINDIR)/libvstring.a:
-	@$(MAKE) -C libvstring OS=$(OS)
+$(LIBDIR)/libvstring.a:
+	@$(MAKE) -C libvstring OS=$(OS) clean all
+	@cp libvstring/$(BINDIR)/libvstring.a $@
 
 ## LIBLUA #############################
 
 $(LIBDIR)/liblua.a:
-	@$(MAKE) -C lua-5.1.5/src CC=$(CC) AR="$(AR) rcs" RANLIB=$(RANLIB) clean generic
-	@cp lua-5.1.5/src/liblua.a $@
+	$(MAKE) -C $(LUADIR)/src CC=$(CC) AR="$(AR) rcs" RANLIB=$(RANLIB) MYCFLAGS="$(CFLAGS)" MYLDFLAGS="$(LDFLAGS)" clean all
+	@cp $(LUADIR)/src/liblua.a $@
 
 ## DEPENDENCY GENERATION ##############
 

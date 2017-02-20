@@ -1,9 +1,7 @@
-*.a
-*.o
-*.debug
-*.map
+bin_*
+lib_*
+.obj_*
 gitrev.h
 LibMaker
 Makefile.dep
-lua-*.tgz
-lua-*.tar.gz
+lua-*
