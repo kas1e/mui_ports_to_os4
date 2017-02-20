@@ -61,7 +61,7 @@ STRPTR LocaleVFmtNew(struct Locale *loc, CONST_STRPTR fmt, va_list args)
 	STRPTR s;
 	va_list copy;
 
-	__va_copy(copy, args);
+	va_copy(copy, args);
 	l = LocaleVFmtLen(loc, fmt, args);
 
 	if ((s = internal_alloc(l)) != NULL)
