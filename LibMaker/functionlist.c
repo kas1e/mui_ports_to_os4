@@ -31,7 +31,7 @@ struct MUI_CustomClass *CreateFunctionListClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct FunctionListData), ENTRY(FunctionListDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_List, NULL, sizeof(struct FunctionListData), ENTRY(FunctionListDispatcher));
 	FunctionListClass = cl;
 	return cl;
 }

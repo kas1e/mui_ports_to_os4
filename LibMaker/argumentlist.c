@@ -29,7 +29,7 @@ struct MUI_CustomClass *CreateArgumentListClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct ArgumentListData), ENTRY(ArgumentListDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_List, NULL, sizeof(struct ArgumentListData), ENTRY(ArgumentListDispatcher));
 	ArgumentListClass = cl;
 	return cl;
 }

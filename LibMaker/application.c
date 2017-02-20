@@ -104,7 +104,7 @@ struct MUI_CustomClass *CreateApplicationClass(void)
 {
 	struct MUI_CustomClass *cl;
 
-	cl = MUI_CreateCustomClass(NULL, MUIC_Application, NULL, sizeof(struct ObjData), ENTRY(ApplicationDispatcher));
+	cl = MUI_CreateCustomClass(NULL, (STRPTR)MUIC_Application, NULL, sizeof(struct ObjData), ENTRY(ApplicationDispatcher));
 	ApplicationClass = cl;
 	return cl;
 }
