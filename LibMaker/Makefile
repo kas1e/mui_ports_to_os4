@@ -212,7 +212,7 @@ ifeq ($(OS), os4)
   CFLAGS   += -mcrt=$(CRT) -I$(LUADIR)/src -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
-  LDLIBS   += -L$(LIBDIR) -llua -lauto
+  LDLIBS   += -llua -lauto
 
   OBJS     += amigaos4_system.o
 
@@ -237,7 +237,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -mcrt=clib2 -I$(LUADIR)/src -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
-  LDLIBS  += -L$(LIBDIR) -llua -ldebug -lmui -lm
+  LDLIBS  += -llua -ldebug -lmui -lm
 
   OBJS     += amigaos3_system.o
   OBJS     += vastubs.o
@@ -401,12 +401,6 @@ distclean: clean
 	-$(RMDIR) $(BINDIR)
 	@$(MAKE) -C libvstring distclean
 
-# install
-.PHONY: install
-install: all
-	@echo "  IN $(TARGET)"
-	@$(CP) $(TARGET) $(DESTDIR)
-
 .PHONY: help
 help:
 	@echo "Cleaning targets:"
@@ -416,9 +410,6 @@ help:
 	@echo "Other generic targets:"
 	@echo "  all      - Build $(TARGET)"
 	@echo "  catalogs - Build all available catalogs"
-	@echo ""
-	@echo "Install targets:"
-	@echo "  install  - Install $(TARGET) into $(DESTDIR)"
 	@echo ""
 	@echo "Parameters:"
 	@echo "  make OS=os3|os4|mos|aros-i386|aros-i686|aros-ppc|aros-x86_64"
