@@ -1,7 +1,6 @@
-*.a
-*.o
-*.debug
-*.map
+bin_*
+lib_*
+.obj_*
 *.catalog
 ChocolateCastle
 Makefile.dep

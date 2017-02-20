@@ -156,6 +156,7 @@ PREFIX    = $(CDTHIS)
 OBJDIR    = .obj_$(OS)
 BINDIR    = bin_$(OS)
 VPATH     = $(OBJDIR)
+LIBDIR   = lib_$(OS)
 DEPFILE   = Makefile.dep
 LOCALEDIR = locale
 
@@ -170,7 +171,7 @@ DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -Ilibvstring -I../include $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -Llibvstring/$(BINDIR) -lvstring
+LDLIBS   = -L$(LIBDIR) -lvstring
 
 ###########################################################################
 # object files definition
@@ -318,7 +319,7 @@ endif
 .PHONY: all
 ifeq ($(wildcard $(DEPFILE)),$(DEPFILE))
 # great, we have a dependecies file, let's make our target
-all: $(BINDIR) $(OBJDIR) $(TARGET) $(CATALOGS)
+all: $(BINDIR) $(OBJDIR) $(LIBDIR) $(TARGET) $(CATALOGS)
 else
 # no dependecies, create it and then call make again
 all: depend
@@ -356,13 +357,18 @@ $(BINDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(BINDIR)
 
+# make the library directories
+$(LIBDIR):
+	@echo "  MK $@"
+	@$(MKDIR) $(LIBDIR)
+
 # for compiling single .c files
 $(OBJDIR)/%.o: %.c
 	@echo "  CC $<"
 	@$(CC) $(CFLAGS) $< -o $@
 
 # for linking the target
-$(TARGET): libvstring/$(BINDIR)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): $(LIBDIR)/libvstring.a $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -376,7 +382,7 @@ dump:
 
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(addprefix $(OBJDIR)/,$(OBJS)) $(CATALOGS)
+	-$(RM) $(TARGET) $(TARGET).debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LIBDIR)/*.a $(CATALOGS)
 	@$(MAKE) -C libvstring clean
 
 .PHONY: catalogs
@@ -409,8 +415,9 @@ help:
 
 ## LIBVSTRING #########################
 
-libvstring/$(BINDIR)/libvstring.a:
-	@$(MAKE) -C libvstring OS=$(OS)
+$(LIBDIR)/libvstring.a:
+	@$(MAKE) -C libvstring OS=$(OS) clean all
+	@cp libvstring/$(BINDIR)/libvstring.a $@
 
 ## DEPENDENCY GENERATION ##############
 
