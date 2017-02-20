@@ -809,9 +809,7 @@ STRPTR* ScanScripts(void)
 	struct Node *n;
 	LONG counter = 0, err;
 
-	string_list.lh_Head = (struct Node*)&string_list.lh_Tail;
-	string_list.lh_Tail = NULL;
-	string_list.lh_TailPred = (struct Node*)&string_list.lh_Head;
+	NewList(&string_list);
 
 	SetIoErr(0);
 
