@@ -11,13 +11,13 @@ STRPTR* CloneStrArray(CONST_STRPTR *array)
 
 	/* Allocate array. */
 
-	if (copy = AllocVecTaskPooled((StrArrayLen(array) + 1) * sizeof(STRPTR*)))
+	if ((copy = AllocVecTaskPooled((StrArrayLen(array) + 1) * sizeof(STRPTR*))) != NULL)
 	{
 		/* Copy entries. */
 
 		for (p0 = array, p1 = copy; *p0; p0++, p1++)
 		{
-			if (!(*p1 = StrNew(*p0)))
+			if ((*p1 = StrNew(*p0)) == NULL)
 			{
 				FreeStrArray(copy);
 				copy = NULL;
