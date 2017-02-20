@@ -46,28 +46,19 @@
 *
 */
 
+#include "libvstring.h"
+
+#include <SDI_hook.h>
+
 extern LONG cph(CONST_STRPTR s);
 
 
-#ifdef __amigaos4__
-static void ctfunc(struct Hook *h, APTR a, char b)
-#else
-static void ctfunc(void)
-#endif
+HOOKPROTONONP(ctfunc, void)
 {
-	#ifndef __amigaos4__
-	struct Hook *h = (struct Hook*)REG_A0;
-	#endif
-	
-	LONG x = (LONG)h->h_Data;
+	LONG x = (LONG)hook->h_Data;
 
-	h->h_Data = (APTR)(++x);
+	hook->h_Data = (APTR)(++x);
 }
-
-#ifndef __amigaos4__
-static const struct EmulLibEntry ctgate = { TRAP_LIB, 0, (void(*)(void))ctfunc };
-#endif
-
 
 
 LONG LocaleVFmtLen(struct Locale *locale, CONST_STRPTR fmt, va_list args)
@@ -79,22 +70,16 @@ LONG LocaleVFmtLen(struct Locale *locale, CONST_STRPTR fmt, va_list args)
 	{
 		LONG argstream[ph];
 		LONG i;
-		struct Hook h;
+		LONG length;
+		MakeHookWithData(h, ctfunc, &length);
 
 		for (i = 0; i < ph; i++)
 		{
 			argstream[i] = va_arg(args, LONG);
 		}
 
-		#ifdef __amigaos4__
-		h.h_Entry = (HOOKFUNC)&ctfunc;
-		#else
-		h.h_Entry = (HOOKFUNC)&ctgate;
-		#endif
-		h.h_Data = 0;
-
 		FormatString(locale, (STRPTR)fmt, argstream, &h);
-		result = (LONG)h.h_Data;
+		result = length;
 	}
 
 	return result;

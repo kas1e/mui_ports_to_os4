@@ -51,6 +51,9 @@
 *
 */
 
+#if !defined(va_copy) && defined(__va_copy)
+	#define va_copy __va_copy
+#endif
 
 STRPTR LocaleVFmtNew(struct Locale *loc, CONST_STRPTR fmt, va_list args)
 {
@@ -61,7 +64,7 @@ STRPTR LocaleVFmtNew(struct Locale *loc, CONST_STRPTR fmt, va_list args)
 	__va_copy(copy, args);
 	l = LocaleVFmtLen(loc, fmt, args);
 
-	if (s = internal_alloc(l))
+	if ((s = internal_alloc(l)) != NULL)
 	{
 		LocaleVFmtPut(loc, s, fmt, copy);
 	}

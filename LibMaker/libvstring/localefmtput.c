@@ -4,6 +4,8 @@
 
 #include <proto/locale.h>
 
+#include <SDI_hook.h>
+
 /****** libvstring/LocaleFmtPut() *******************************************
 *
 * NAME
@@ -52,28 +54,15 @@
 
 extern LONG cph(CONST_STRPTR s);
 
-#ifdef __amigaos4__
-static void pufunc(struct Hook *h, APTR a, char c)
-#else
-static void pufunc(void)
-#endif
+HOOKPROTONO(pufunc, void, char c)
 {
-
-
-	#ifndef __amigaos4__
-	struct Hook *h = (struct Hook*)REG_A0;
-	char c = (char)REG_A1;
-	#endif
-	
-	STRPTR p = (STRPTR)h->h_Data;
+	STRPTR p = (STRPTR)hook->h_Data;
 
 	*p++ = c;
-	h->h_Data = (APTR)p;
+
+	hook->h_Data = (APTR)p;
 }
 
-#ifndef __amigaos4__
-static const struct EmulLibEntry pugate = { TRAP_LIB, 0, (void(*)(void))pufunc };
-#endif
 
 void LocaleVFmtPut(struct Locale *locale, STRPTR dest, CONST_STRPTR fmt, va_list args)
 {
@@ -84,18 +73,12 @@ void LocaleVFmtPut(struct Locale *locale, STRPTR dest, CONST_STRPTR fmt, va_list
 	{
 		LONG argstream[ph];
 		LONG i;
-		struct Hook h;
+		MakeHookWithData(h, pufunc, dest);
 
 		for (i = 0; i < ph; i++)
 		{
 			argstream[i] = va_arg(args, LONG);
 		}
-		#ifdef __amigaos4__
-		h.h_Entry = (HOOKFUNC)&pufunc;
-		#else
-		h.h_Entry = (HOOKFUNC)&pugate;
-		#endif
-		h.h_Data = dest;
 
 		FormatString(locale, (STRPTR)fmt, argstream, &h);
 	}
