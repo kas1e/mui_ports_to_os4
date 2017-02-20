@@ -175,24 +175,28 @@ LDLIBS   =
 # object files definition
 #
 
-OBJS = fmtlen.o \
-       fmtnew.o  \
-       fmtput.o  \
-       freestrarray.o  \
-       strarraylen.o  \
-       strcopy.o  \
-       strlen.o  \
-       strnew.o  \
-       strreplace.o \
+OBJS = clonestrarray.o \
+       fmtlen.o \
+       fmtnew.o \
+       fmtnput.o \
+       fmtput.o \
+       freestrarray.o \
+       localefmtlen.o \
+       localefmtnew.o \
+       localefmtput.o \
+       strarraylen.o \
        strchr.o \
+       strcopy.o \
        strequ.o \
+       strlen.o \
        strltrim.o \
+       strncopy.o \
+       strnequ.o \
+       strnew.o \
+       strreplace.o \
        strrtrim.o \
        strtrim.o \
-       strnequ.o \
-       vfmtnew.o  \
-       strncopy.o  \
-       fmtnput.o
+       vfmtnew.o
 
 
 # different options per target OS
