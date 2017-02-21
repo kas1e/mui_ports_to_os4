@@ -31,12 +31,11 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #define NewObjectM      NewObject
 
 #if defined(__amigaos4__)
-#define AllocTaskPooled(size) AllocVecTags(size, AVT_Type, MEMF_ANY, TAG_DONE)
-#define FreeTaskPooled(mem, size) FreeVec(mem)
+#define AllocTaskPooled(size) AllocVecTags(size, AVT_Type, MEMF_SHARED, TAG_DONE)
 #else
-#define AllocTaskPooled(size) AllocMem(size, MEMF_ANY)
-#define FreeTaskPooled(mem, size) FreeMem(mem, size)
+#define AllocTaskPooled(size) AllocVec(size, MEMF_ANY)
 #endif
+#define FreeTaskPooled(mem, size) FreeVec(mem)
 
 APTR AllocVecTaskPooled(ULONG byteSize);
 void FreeVecTaskPooled(APTR memory);
