@@ -2,6 +2,10 @@
 
 #include "libvstring.h"
 
+#include <proto/exec.h>
+#if defined(__MORPHOS__)
+#include <exec/rawfmt.h>
+#endif
 
 STRPTR* CloneStrArray(CONST_STRPTR *array)
 {
