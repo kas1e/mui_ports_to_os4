@@ -20,6 +20,7 @@ Object *NewObjectM(Class *cl, const char *classname, ...);
 #else
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <lua.h>
 #include <lualib.h>
@@ -30,12 +31,8 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #define MUI_NewObjectM  MUI_NewObject
 #define NewObjectM      NewObject
 
-#if defined(__amigaos4__)
-#define AllocTaskPooled(size) AllocVecTags(size, AVT_Type, MEMF_SHARED, TAG_DONE)
-#else
-#define AllocTaskPooled(size) AllocVec(size, MEMF_ANY)
-#endif
-#define FreeTaskPooled(mem, size) FreeVec(mem)
+#define AllocTaskPooled(size)     malloc(size)
+#define FreeTaskPooled(mem, size) free(mem)
 
 APTR AllocVecTaskPooled(ULONG byteSize);
 void FreeVecTaskPooled(APTR memory);
