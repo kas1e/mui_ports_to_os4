@@ -432,7 +432,11 @@ ULONG HexStrToULong(CONST_STRPTR s)
 
 struct RDArgs* ParseLine(char *line, const char *templ, LONG *params, struct RDArgs *srcargs)
 {
+	#if defined(__MORPHOS__)
+	srcargs->RDA_Source.CS_Buffer = (UBYTE *)line;
+	#else
 	srcargs->RDA_Source.CS_Buffer = line;
+	#endif
 	srcargs->RDA_Source.CS_Length = StrLen(line);
 	srcargs->RDA_Source.CS_CurChr = 0;
 	srcargs->RDA_DAList = 0;
