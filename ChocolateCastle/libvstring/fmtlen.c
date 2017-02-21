@@ -13,7 +13,7 @@ ULONG FmtLen(CONST_STRPTR fmt, ...)
 	ULONG l = 0;
 
 	va_start(args, fmt);
-	VNewRawDoFmt(fmt, RAWFMTFUNC_COUNT, (STRPTR)&l, args);
+	VNewRawDoFmt(fmt, (APTR)RAWFMTFUNC_COUNT, (STRPTR)&l, args);
 	va_end(args);
 	return l;
 }
